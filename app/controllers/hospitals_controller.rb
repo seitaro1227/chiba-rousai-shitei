@@ -39,11 +39,12 @@ class HospitalsController < ApplicationController
   end
 
   def markers(hospitals)
-    Gmaps4rails.build_markers hospitals do|hospital, marker|
-      marker.lat hospital.latitude
-      marker.lng hospital.longitude
-      marker.title hospital.name
-      marker.infowindow render_to_string(:partial => "/hospitals/info_window", :locals => { :hospital => hospital})
+    hospitals.map do |hospital|
+      { lat: hospital.latitude,
+        lng: hospital.longitude,
+        marker_title: hospital.name,
+        infowindow: render_to_string(:partial => "/hospitals/info_window", :locals => { :hospital => hospital})
+      }
     end
   end
 end

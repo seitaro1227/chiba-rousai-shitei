@@ -41,13 +41,13 @@ gem 'honoka-rails'
 gem 'roo'
 gem 'seed-fu'
 gem 'geocoder'
-gem 'gmaps4rails'
 gem 'geokit-rails'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platform: :mri
   gem 'pry-rails'
+  gem 'dotenv-rails'
 end
 
 group :development do
