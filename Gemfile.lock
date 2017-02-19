@@ -58,6 +58,10 @@ GEM
     execjs (2.7.0)
     ffi (1.9.14)
     geocoder (1.4.1)
+    geokit (1.10.0)
+    geokit-rails (2.2.0)
+      geokit (~> 1.5)
+      rails (>= 3.0)
     globalid (0.3.7)
       activesupport (>= 4.1.0)
     gmaps4rails (2.1.2)
@@ -186,6 +190,7 @@ DEPENDENCIES
   coffee-rails (~> 4.2)
   debase
   geocoder
+  geokit-rails
   gmaps4rails
   honoka-rails
   jbuilder (~> 2.5)
