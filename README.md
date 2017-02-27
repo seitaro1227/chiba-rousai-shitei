@@ -4,7 +4,7 @@
 の指定医療機関名簿のデータを地図上に落とし込み、病院名や診療科目や現在地の検索できるようにしたWebサービスです。
 
 ## デモ
-
+https://chiba-rousai-shitei.herokuapp.com/
 
 ## 機能
 - 監督署、病院名、診療科目、現在地からの距離での絞込ができます。
@@ -43,7 +43,6 @@ rake geocoder:hospital:update_by_names
 `data/hospital.xlsx`からDBにデータ登録し、住所から位置情報を取得し登録します。
 ```
 rake db:reset
-rake db:migrate
 rake db:seed_fu
 rake geocoder:hospital:import
 rake geocoder:hospital:update
