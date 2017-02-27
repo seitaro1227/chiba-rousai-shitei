@@ -5,10 +5,15 @@ namespace :geocoder do
 
     desc "病院の住所から位置情報の取得し更新します。"
     task :update => :environment do
-      Hospital.not_geocoded.find_each do |h|
+      hospitals = Hospital.not_geocoded
+      puts "位置情報が登録されていない病院は#{hospitals.count}件"
+      puts '登録開始'
+      hospitals.find_each do |h|
+        puts "#{h.name}"
         h.geocode
         h.save
       end
+      puts '登録完了'
     end
 
     desc "病院の住所から位置情報の取得に失敗した一覧を表示します"
@@ -22,7 +27,7 @@ namespace :geocoder do
     task :update_by_names => :environment do
       Hospital.not_geocoded.each do |h|
         name = h.name.gsub(/(\r\n|\r|\n)/, '')
-        search_result = Geocoder.search(name)
+        search_result = Hospital.find_by(number: '1224425')
         unless search_result.empty? || search_result.size > 2
           result = search_result.first
           if h.zip_code == result.postal_code
@@ -72,8 +77,12 @@ namespace :geocoder do
     task :import => :environment  do
       data = YAML.load_file("./data/hospital_geo.yaml")
       data.each do|number, values|
-        values.delete(:name)
-        Hospital.find_by(number: number).update(values)
+        name = values.delete(:name)
+        if(hospital = Hospital.find_by(number: number))
+          hospital.update(values)
+        else
+          puts "番号#{number}の病院#{name}は登録されていません。"
+        end
       end
     end
   end
