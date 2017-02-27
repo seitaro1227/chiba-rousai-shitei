@@ -10,13 +10,14 @@
 </style>
 <%= javascript_tag do %>
     var markers = <%= raw @markers.to_json %>;
+    var geo_location = <%= raw @geolocation.to_json %>;
 <% end %>
 <script type="text/javascript" charset="utf-8">
     var map;
     var current_infowindow;
     function initMap() {
         var map_option = {
-            zoom: 10,
+            zoom: 15,
             mapTypeId: google.maps.MapTypeId.ROADMAP
         };
         map = new google.maps.Map(document.getElementById('map'), map_option);
@@ -24,9 +25,14 @@
     }
 
     function mapResize() {
-        var chiba = new google.maps.LatLng(35.636212, 140.107083);
         google.maps.event.trigger(map, 'resize');
-        map.setCenter(chiba);
+        if(typeof(geo_location) === 'undefined'){
+            var chiba = new google.maps.LatLng(35.636212, 140.107083);
+            map.setCenter(chiba);
+        }else{
+            map.setCenter(new google.maps.LatLng(geo_location.lat,geo_location.lng));
+        }
+
     }
 
     function mapSetMarker() {
