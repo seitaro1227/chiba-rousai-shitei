@@ -19,7 +19,7 @@ namespace :geocoder do
     end
 
     desc "施設名から位置情報を探す"
-    task :update_by_names => :environment do |t, args|
+    task :update_by_names => :environment do
       Hospital.not_geocoded.each do |h|
         name = h.name.gsub(/(\r\n|\r|\n)/, '')
         search_result = Geocoder.search(name)
@@ -42,7 +42,7 @@ namespace :geocoder do
       end
     end
 
-    desc "位置情報を./data/hospital_geo.yamlに書き出します"
+    desc "位置情報の取得に成功した病院をdata/hospital_geo.yamlに書き出します"
     task :export => :environment do
       data = {}
       Hospital.geocoded.each do |h|
@@ -55,7 +55,7 @@ namespace :geocoder do
       end
     end
 
-    desc "位置情報を./data/hospital_not_geocoded.yamlに書き出します"
+    desc "取得に失敗した病院をdata/hospital_not_geocoded.yamlに書き出します"
     task :export_not_geocoded => :environment do
       data = {}
       Hospital.not_geocoded.each do |h|
@@ -68,7 +68,7 @@ namespace :geocoder do
       end
     end
 
-    desc "位置情報を./data/hospital_geo.yamlから取り込みます"
+    desc "病院の位置情報をdata/hospital_geo.yamlから取り込みます"
     task :import => :environment  do
       data = YAML.load_file("./data/hospital_geo.yaml")
       data.each do|number, values|
