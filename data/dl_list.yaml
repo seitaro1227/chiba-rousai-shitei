@@ -1,4 +1,4 @@
-hospitals: 'http://chiba-roudoukyoku.jsite.mhlw.go.jp/var/rev0/0109/1731/iryou01.280930.xlsx',
-pharmacies: 'http://chiba-roudoukyoku.jsite.mhlw.go.jp/var/rev0/0109/1732/iryou02.280930.xlsx',
-bonesetter_clinis: 'http://chiba-roudoukyoku.jsite.mhlw.go.jp/var/rev0/0109/1733/iryou03.280930.xlsx',
-acupunctures: 'http://chiba-roudoukyoku.jsite.mhlw.go.jp/var/rev0/0109/1734/iryou04.280930.xlsx'
+hospitals: 'http://chiba-roudoukyoku.jsite.mhlw.go.jp/var/rev0/0109/3159/iryou01.2812.xlsx',
+pharmacies: 'http://chiba-roudoukyoku.jsite.mhlw.go.jp/var/rev0/0109/3160/iryou02.2812.xlsx',
+bonesetter_clinis: 'http://chiba-roudoukyoku.jsite.mhlw.go.jp/var/rev0/0109/3161/iryou03.2812.xlsx',
+acupunctures: 'http://chiba-roudoukyoku.jsite.mhlw.go.jp/var/rev0/0109/3162/iryou04.2812.xlsx'
