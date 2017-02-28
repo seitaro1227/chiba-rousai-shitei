@@ -1,0 +1,8 @@
+<div class="geolocation_area">
+  <dt>現在地から何km以内</dt>
+  <!--500m,1km,2km,3km,5km,10km-->
+  <dd>
+    <%= select_tag 'km', options_for_select(@km_options,selected: params[:km]),:include_blank => true %>
+    <button type="button" onclick="featch_geolocation(this)">位置情報を更新</button>
+  </dd>
+</div>

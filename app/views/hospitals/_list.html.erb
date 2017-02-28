@@ -1,0 +1,107 @@
+<div class="row">
+  <div class="col-md-12">
+    <%= form_tag '/', method:'get' do %>
+      <dl>
+        <dt>監督署</dt>
+        <%= select_tag 'jurisdiction', options_for_select(@area_options,selected: params[:jurisdiction]) %>
+        <dd>
+        </dd>
+        <dt>診療科目</dt>
+        <dd>
+          <%= text_field_tag 'subject',params[:subject] %>
+        </dd>
+        <dt>病院名</dt>
+        <dd>
+          <%= text_field_tag 'name' ,params[:name]%>
+        </dd>
+        <% if @geolocation.blank? %>
+            <div class="geolocation_area">
+              <dt>現在地を取得する</dt>
+              <dd><button type="button" onclick="featch_geolocation(this)">現在地を取得する</button></dd>
+            </div>
+        <% else %>
+            <%= render 'geolocation_area' %>
+        <%- end %>
+      </dl>
+        <%= submit_tag '検索' %>
+    <% end -%>
+  </div>
+</div>
+<script charset="utf-8">
+    function featch_geolocation(button) {
+        var successCallback = function (position) {
+            console.log("successCallback");
+            var geolocation = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+            };
+            $.ajax({
+                url: '<%= hospitals_set_geolocation_path %>',
+                type: 'POST',
+                dataType: 'html',
+                data: geolocation,
+            })
+                .done(function (html) {
+                    $('.geolocation_area').html(html);
+                    console.log("success");
+                })
+                .fail(function () {
+                    console.log("error");
+                })
+                .always(function () {
+                    console.log("complete");
+                });
+        };
+        var errorCallback = function () {
+            console.log("errorCallback");
+        };
+
+        if (navigator.geolocation) {
+
+            navigator.geolocation.getCurrentPosition(successCallback,errorCallback);
+        }
+    }
+</script>
+<div class="row">
+  <div class="col-md-12">
+    <table class="table">
+      <thead>
+      <tr>
+        <th>監督署</th>
+        <th>番号</th>
+        <th>名称</th>
+        <th>〒</th>
+        <th>所在地</th>
+        <th>診療科目</th>
+        <th>採型</th>
+        <th>二次</th>
+        <th>電話</th>
+      </tr>
+      </thead>
+      <tbody>
+      <% @hospitals.each do |hospital| %>
+        <tr>
+          <td><%=hospital.jurisdiction%></td>
+          <td><%=hospital.number%></td>
+          <td>
+            <% unless hospital.geocoded?  %>
+              <span class="label label-danger">位置情報なし</span>
+            <% end -%>
+            <%=hospital.name%>
+          </td>
+          <td><%=hospital.zip_code%></td>
+          <td><%=hospital.address%></td>
+          <td><%=hospital.subject%></td>
+          <td><%=hospital.saikei%></td>
+          <td><%=hospital.niji%></td>
+          <td><%=hospital.phone_number%></td>
+        </tr>
+      <%- end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<% if @geolocation.blank? %>
+
+<%- end %>
