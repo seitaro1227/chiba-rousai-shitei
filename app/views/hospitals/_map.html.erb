@@ -8,13 +8,10 @@
     width: 100%; height: 700px;
   }
 </style>
-<%= javascript_tag do %>
-    var markers = <%= raw @markers.to_json %>;
-    var geo_location = <%= raw @geolocation.to_json %>;
-<% end %>
 <script type="text/javascript" charset="utf-8">
     var map;
     var current_infowindow;
+    var geo_location = <%= raw @geolocation.to_json %>;
     function initMap() {
         var map_option = {
             zoom: 15,
@@ -26,7 +23,7 @@
 
     function mapResize() {
         google.maps.event.trigger(map, 'resize');
-        if(typeof(geo_location) === 'undefined'){
+        if(Object.keys(geo_location).length === 0){
             var chiba = new google.maps.LatLng(35.636212, 140.107083);
             map.setCenter(chiba);
         }else{
@@ -36,6 +33,7 @@
     }
 
     function mapSetMarker() {
+        var markers = <%= raw @markers.to_json %>;
         for (var i = 0; i < markers.length; i++) {
             var data = markers[i];
             var latlen = new google.maps.LatLng(data.lat,data.lng);
