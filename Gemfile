@@ -36,11 +36,15 @@ gem 'jbuilder', '~> 2.5'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
-# bootstrap
+# フロント
+gem 'leaflet-rails'
 gem 'honoka-rails'
+
 # excelの読み込み
 gem 'roo'
 gem 'seed-fu'
+
+# ジオコーディング
 gem 'geocoder'
 gem 'geokit-rails'
 
