@@ -7,4 +7,5 @@ class Hospital < ApplicationRecord
                    :lng_column_name => :longitude
 
   after_validation :geocode, if: :address_changed?
+  belongs_to :jurisdiction
 end
