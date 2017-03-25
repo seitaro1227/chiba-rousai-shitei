@@ -1,0 +1,20 @@
+<%- @km_options = [%w"500m 1km 2km 3km 5km 10km", %w"0.5 1 2 3 5 10"].transpose %>
+<%= form_tag(hospitals_path, :method => :get, :id => :geolocation ) do %>
+    <%= hidden_field_tag(:current_location) %>
+    <%= select_tag 'km', options_for_select(@km_options,selected: params[:km]),:include_blank => true %>
+    <button class="btn btn-default" type="submit" disabled>位置情報を取得中</button>
+<%- end %>
+<script>
+    var geolocation_callbacks = {
+        success: function (e) {
+            $('#geolocation')
+                .find('#current_location').val(e.coords.latitude +','+ e.coords.longitude).end()
+                .find('button[type=submit]').text('位置情報から検索できます').prop("disabled", false);
+        },
+        error: function () {
+            $('#geolocation')
+                .find('button[type=submit]').text('位置情報の取得に失敗しました').prop("disabled", true);
+        }
+    };
+    $($.geolocation.get(geolocation_callbacks));
+</script>

@@ -1,10 +1,9 @@
 class HospitalsController < ApplicationController
   def index
     jurisdiction = Jurisdiction.find_by(roman: params[:jurisdiction])
+    @jurisdictions = Jurisdiction.all
+    @jurisdiction_selected = params[:jurisdiction] || 'chiba'
     @hospitals = search_hospital(params, jurisdiction)
-    # @markers = markers(@hospitals) if(@hospitals.present?)
-    @area_options = %w"千葉 船橋 柏 銚子 木更津 茂原 成田 東金".map{|i|[i,i]}
-    @km_options = [%w"500m 1km 2km 3km 5km 10km", %w"0.5 1 2 3 5 10"].transpose
   end
 
   private

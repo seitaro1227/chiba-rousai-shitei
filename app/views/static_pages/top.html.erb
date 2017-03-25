@@ -1,38 +1,24 @@
+<%= render 'hospitals/header' %>
 <div class="container">
   <div class="row">
     <div class="col-md-12">
       <h1>トップページ</h1>
       <h2>位置情報から探す</h2>
-      <%= form_tag(hospitals_path, :method => :get, :id => :geolocation ) do %>
-          <%= hidden_field_tag(:current_location) %>
-          <%= select_tag 'km', options_for_select(@km_options,selected: params[:km]),:include_blank => true %>
-          <button class="btn btn-default" type="submit" disabled>位置情報を取得中</button>
-      <%- end %>
+      <%= render 'geolocation_search' %>
       <h2>監督署のエリアから探す</h2>
-      <%= select_tag 'jurisdiction',options_from_collection_for_select(@jurisdictions, :roman, :name, :selected => 'chiba') %>
-
-      <h2>路線から探す</h2>
-      <select name="" id="">
-        <option value="">JR 常磐線</option>
-        <option value="">新京成電鉄</option>
-      </select>
-      <select name="" id="">
-        <option value="">駅名を動的に作る</option>
-      </select>
+      <%= form_tag(hospitals_path, :method => :get, :id => :geolocation ) do %>
+        <%= select_tag 'jurisdiction',options_from_collection_for_select(@jurisdictions, :roman, :name, :selected => @jurisdiction_selected) %>
+          <span>の</span><button type="submit">労働基準局から探す</button>
+      <%- end %>
+      <!--<h2>路線から探す</h2>-->
+      <!--<select name="" id="">-->
+        <!--<option value="">JR 常磐線</option>-->
+        <!--<option value="">新京成電鉄</option>-->
+      <!--</select>-->
+      <!--<select name="" id="">-->
+        <!--<option value="">駅名を動的に作る</option>-->
+      <!--</select>-->
     </div>
   </div>
 </div>
-<script>
-  var geolocation_callbacks = {
-      success: function (e) {
-          $('#geolocation')
-              .find('#current_location').val(e.coords.latitude +','+ e.coords.longitude).end()
-              .find('button[type=submit]').text('位置情報から検索できます').prop("disabled", false);
-      },
-      error: function () {
-          $('#geolocation')
-              .find('button[type=submit]').text('位置情報の取得に失敗しました').prop("disabled", true);
-      }
-  };
-  $($.geolocation.get(geolocation_callbacks));
-</script>
+

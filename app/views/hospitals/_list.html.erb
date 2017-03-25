@@ -1,9 +1,9 @@
 <div class="row">
   <div class="col-md-12">
-    <%= form_tag '/', method:'get' do %>
+    <%= form_tag hospitals_path, method:'get' do %>
       <dl>
         <dt>監督署</dt>
-        <%= select_tag 'jurisdiction', options_for_select(@area_options,selected: params[:jurisdiction]) %>
+        <%= select_tag 'jurisdiction',options_from_collection_for_select(@jurisdictions, :roman, :name, :selected => @jurisdiction_selected) %>
         <dd>
         </dd>
         <dt>診療科目</dt>
@@ -14,54 +14,11 @@
         <dd>
           <%= text_field_tag 'name' ,params[:name]%>
         </dd>
-        <% if @geolocation.blank? %>
-            <div class="geolocation_area">
-              <dt>現在地を取得する</dt>
-              <dd><button type="button" onclick="featch_geolocation(this)">現在地を取得する</button></dd>
-            </div>
-        <% else %>
-            <%= render 'geolocation_area' %>
-        <%- end %>
       </dl>
-        <%= submit_tag '検索' %>
+        <button type="submit">検索</button>
     <% end -%>
   </div>
 </div>
-<script charset="utf-8">
-    function featch_geolocation(button) {
-        var successCallback = function (position) {
-            console.log("successCallback");
-            var geolocation = {
-                lat: position.coords.latitude,
-                lng: position.coords.longitude
-            };
-            $.ajax({
-                url: '<%= hospitals_set_geolocation_path %>',
-                type: 'POST',
-                dataType: 'html',
-                data: geolocation,
-            })
-                .done(function (html) {
-                    $('.geolocation_area').html(html);
-                    console.log("success");
-                })
-                .fail(function () {
-                    console.log("error");
-                })
-                .always(function () {
-                    console.log("complete");
-                });
-        };
-        var errorCallback = function () {
-            console.log("errorCallback");
-        };
-
-        if (navigator.geolocation) {
-
-            navigator.geolocation.getCurrentPosition(successCallback,errorCallback);
-        }
-    }
-</script>
 <div class="row">
   <div class="col-md-12">
     <table class="table">
@@ -81,7 +38,7 @@
       <tbody>
       <% @hospitals.each do |hospital| %>
         <tr>
-          <td><%=hospital.jurisdiction%></td>
+          <td><%=hospital.jurisdiction.name %></td>
           <td><%=hospital.number%></td>
           <td>
             <% unless hospital.geocoded?  %>
@@ -101,7 +58,3 @@
     </table>
   </div>
 </div>
-
-<% if @geolocation.blank? %>
-
-<%- end %>
