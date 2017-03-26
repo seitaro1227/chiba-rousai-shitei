@@ -1,27 +1,25 @@
 <%= render 'header' %>
-<div class="section">
-  <div class="container">
-    <ul class="nav nav-tabs">
-      <li class="active"><a data-toggle="tab" href="#content_list">一覧</a></li>
-      <li><a data-toggle="tab" href="#content_map">マップ</a></li>
-    </ul>
-    <div class="tab-content">
-      <div id="content_list" class="tab-pane active">
+<div id="searchModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">詳細検索</h4>
+      </div>
+      <div class="modal-body">
         <%= render 'list' %>
       </div>
-      <div id="content_map" class="tab-pane ">
-        <%= render 'map' %>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default">マップに表示する</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
 </div>
-<script async defer
-        src="https://maps.googleapis.com/maps/api/js?v=3&key=<%= ENV['GOOGLE_MAPS_API_KEY'] %>&callback=initMap">
-</script>
-<script type="text/javascript" charset="utf-8">
-    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-       if ($(e.target).attr('href') === '#content_map'){
-           mapResize();
-       }
-    })
-</script>
+
+<div id="map"></div>
+<style>
+  #map {
+    width: 100%; height: 700px;
+  }
+</style>

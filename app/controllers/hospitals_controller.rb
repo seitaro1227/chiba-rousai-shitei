@@ -1,9 +1,14 @@
 class HospitalsController < ApplicationController
   def index
     jurisdiction = Jurisdiction.find_by(roman: params[:jurisdiction])
+    @current_location = location_params(params[:current_location])
     @jurisdictions = Jurisdiction.all
     @jurisdiction_selected = params[:jurisdiction] || 'chiba'
     @hospitals = search_hospital(params, jurisdiction)
+    respond_to do |format|
+      format.html
+      format.geojson {render :json => geojson(@hospitals)}
+    end
   end
 
   private
@@ -28,13 +33,16 @@ class HospitalsController < ApplicationController
     end
   end
 
-  def markers(hospitals)
-    hospitals.map do |hospital|
-      { lat: hospital.latitude,
-        lng: hospital.longitude,
-        marker_title: hospital.name,
-        infowindow: render_to_string(:partial => "/hospitals/info_window", :locals => { :hospital => hospital})
+  def geojson(hospitals)
+    features = hospitals.map do |hospital|
+      {:type => "Feature",
+       :geometry => {"type" => "Point", "coordinates" => [hospital.longitude, hospital.latitude]},
+       :properties => {:name => hospital.name}
       }
     end
+
+    {"type" => "FeatureCollection",
+     "features" => features
+    }
   end
 end
