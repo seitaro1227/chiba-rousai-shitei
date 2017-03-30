@@ -1,4 +1,7 @@
 class Hospital < ApplicationRecord
+  has_many :hospital_subjects, :dependent => :destroy
+  has_many :subjects, :through => :hospital_subjects
+
   geocoded_by :address
   acts_as_mappable :default_units => :kms,
                    :default_formula => :sphere,
