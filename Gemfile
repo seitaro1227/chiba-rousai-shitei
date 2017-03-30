@@ -37,7 +37,6 @@ gem 'jbuilder', '~> 2.5'
 # gem 'capistrano-rails', group: :development
 
 # フロント
-gem 'leaflet-rails', :git => 'https://github.com/seitaro1227/leaflet-rails.git', :branch => 'fix/get_icon_url_if_call_geojson'
 gem 'honoka-rails'
 
 # excelの読み込み
