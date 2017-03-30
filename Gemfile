@@ -37,7 +37,6 @@ gem 'jbuilder', '~> 2.5'
 # gem 'capistrano-rails', group: :development
 
 # フロント
-gem 'leaflet-rails'
 gem 'honoka-rails'
 
 # excelの読み込み

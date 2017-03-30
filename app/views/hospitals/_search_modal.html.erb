@@ -1,0 +1,53 @@
+<div class="row">
+  <div class="col-md-12">
+    <%= form_tag hospitals_path, method:'get' do %>
+      <%= hidden_field_tag 'current_location', params[:current_location] if params[:current_location].present? %>
+        <dl>
+        <dt>出発地点</dt>
+        <dd>
+          現在地: (<%= params[:current_location] -%>)
+        </dd>
+        <dt>出発地点からの距離</dt>
+        <dd>
+          <%- @km_options = [%w"1km 2km 3km 5km 10km", %w"1 2 3 5 10"].transpose %>
+          <%= select_tag 'km', options_for_select(@km_options,selected: params[:km]),:include_blank => true %>
+        </dd>
+        <dt>監督署</dt>
+        <dd>
+          <%= select_tag 'jurisdiction',options_from_collection_for_select(@jurisdictions, :roman, :name, :selected => @jurisdiction_selected) %>
+        </dd>
+        <dt>診療科目</dt>
+        <dd>
+          <%= text_field_tag 'subject',params[:subject] %>
+        </dd>
+        <dt>病院名</dt>
+        <dd>
+          <%= text_field_tag 'name' ,params[:name]%>
+        </dd>
+      </dl>
+        <button type="submit">マップに表示する</button>
+  <% end -%>
+  </div>
+</div>
+<ul class="list-group">
+  <% @hospitals.each_with_index do |hospital, index| %>
+      <li class="list-group-item">
+        <a data-toggle="collapse" href="#lg<%= index -%>">
+          <% unless hospital.geocoded? %>
+              <span class="label label-danger">位置情報なし</span>
+          <% end -%>
+          <%= hospital.name %>
+          <br>
+          <%= hospital.subject %>
+        </a>
+        <div id="lg<%= index -%>" class="panel-collapse collapse">
+          <ul>
+            <li>住所: <%= hospital.address %></li>
+            <li>電話: <%= hospital.phone_number %></li>
+            <li>採型:<%= hospital.saikei %></li>
+            <li>二次:<%= hospital.niji %></li>
+          </ul>
+        </div>
+      </li>
+  <%- end %>
+</ul>
