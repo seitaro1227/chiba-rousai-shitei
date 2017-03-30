@@ -31,20 +31,20 @@
         attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
+    <% if params[:km].present? %>
       var circle = L.circle(center, {
           color: '#00bbff',
           fillColor: '#00bbff',
           fillOpacity: 0.3,
-          radius: 1500
+          radius: <%= params[:km].to_i * 1000 -%>
       }).addTo(map);
-
       var center_circle = L.circle(center, {
           color: '#0099dd',
           fillColor: '#0099dd',
           fillOpacity: 1,
           radius: 50
       }).addTo(map);
-
+    <% end -%>
     var current_geojson;
     var url = '<%= hospitals_path(:format => :geojson) -%>';
     var data = <%= params.to_json.html_safe -%>;
