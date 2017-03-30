@@ -37,7 +37,17 @@ class HospitalsController < ApplicationController
     features = hospitals.map do |hospital|
       {:type => "Feature",
        :geometry => {"type" => "Point", "coordinates" => [hospital.longitude, hospital.latitude]},
-       :properties => {:name => hospital.name}
+       :properties => {
+           :number       => hospital.number,
+           :name         => hospital.name,
+           :address      => hospital.address,
+           :jurisdiction_name => hospital.jurisdiction.name,
+           :phone_number => hospital.phone_number,
+           :saikei       => hospital.saikei,
+           :niji         => hospital.niji,
+           :subject      => hospital.subject,
+           :zip_code     => hospital.zip_code,
+       }
       }
     end
 

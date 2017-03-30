@@ -7,7 +7,7 @@
         <h4 class="modal-title">詳細検索</h4>
       </div>
       <div class="modal-body">
-        <%= render 'list' %>
+        <%= render 'search_modal' %>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default">マップに表示する</button>
@@ -23,3 +23,44 @@
     width: 100%; height: 700px;
   }
 </style>
+<script>
+  $(function () {
+    var center = L.latLng(<%= @current_location[:lat] %>, <%= @current_location[:lng] %>);
+    var map = L.map('map').setView(center, 13);
+    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+      var circle = L.circle(center, {
+          color: '#00bbff',
+          fillColor: '#00bbff',
+          fillOpacity: 0.3,
+          radius: 1500
+      }).addTo(map);
+
+      var center_circle = L.circle(center, {
+          color: '#0099dd',
+          fillColor: '#0099dd',
+          fillOpacity: 1,
+          radius: 50
+      }).addTo(map);
+
+    var current_geojson;
+    var url = '<%= hospitals_path(:format => :geojson) -%>';
+    var data = <%= params.to_json.html_safe -%>;
+    $.getJSON(url, data, function (geojson) {
+        if(typeof(current_geojson) !== "undefined"){
+            current_geojson.remove(map);
+        }
+        current_geojson = L.geoJson(geojson)
+            .bindPopup(function (layer) {
+                return layer.feature.properties.name + '<br>' +
+                       '住所:'+ layer.feature.properties.address + '<br>' +
+                       'TEL:'+ layer.feature.properties.phone_number + '<br>' +
+                       '診療科:'+ layer.feature.properties.subject;
+            });
+        current_geojson.addTo(map);
+    });
+  });
+
+</script>
