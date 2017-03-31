@@ -25,7 +25,15 @@
 </style>
 <script>
   $(function () {
-    var center = L.latLng(<%= @current_location[:lat] %>, <%= @current_location[:lng] %>);
+    // 千葉駅の座標
+    var center = L.latLng(35.6129259, 140.1134781);
+    <% if @current_location[:result] %>
+    // current_location
+    center = L.latLng(<%= @current_location[:lat] %>, <%= @current_location[:lng] %>);
+    <% elsif not @center_of_gravity.first.nan? %>
+    // 重心点
+    center = L.latLng(<%= @center_of_gravity.first %>, <%= @center_of_gravity.second %>);
+    <% end %>
     var map = L.map('map').setView(center, 13);
     L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
