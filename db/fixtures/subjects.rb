@@ -36,4 +36,6 @@ Subject.seed(:code,
              {:code => '150', :name => '脳神経外科', :short_name => '脳神'},
              {:code => '170', :name => '心臓血管外科', :short_name => '心血'},
              {:code => '280', :name => '神経内科', :short_name => '神内'},
+             {:code => '910', :name => '不明', :short_name => '不明'},
+             {:code => '911', :name => 'その他', :short_name => '他'},
 )

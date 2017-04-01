@@ -23,7 +23,7 @@ class HospitalsController < ApplicationController
     rel = rel.where('name LIKE ?',"%#{params[:name]}%") if params[:name].present?
     rel = rel.where("jurisdiction_id = ?", jurisdiction.id) if jurisdiction.present?
     rel = rel.all if(params[:subject].blank? and jurisdiction.blank? and params[:name].blank? and params[:km].blank?)
-    rel
+    rel.includes(:jurisdiction)
   end
 
   def location_params(current_location_param)
