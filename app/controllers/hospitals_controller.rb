@@ -5,6 +5,7 @@ class HospitalsController < ApplicationController
     @jurisdictions = Jurisdiction.all
     @jurisdiction_selected = params[:jurisdiction] || 'chiba'
     @hospitals = search_hospital(params, jurisdiction)
+    @center_of_gravity = center_of_gravity(@hospitals)
     respond_to do |format|
       format.html
       format.geojson {render :json => geojson(@hospitals)}
@@ -22,7 +23,7 @@ class HospitalsController < ApplicationController
     rel = rel.where('name LIKE ?',"%#{params[:name]}%") if params[:name].present?
     rel = rel.where("jurisdiction_id = ?", jurisdiction.id) if jurisdiction.present?
     rel = rel.all if(params[:subject].blank? and jurisdiction.blank? and params[:name].blank? and params[:km].blank?)
-    rel
+    rel.includes(:jurisdiction)
   end
 
   def location_params(current_location_param)
@@ -31,6 +32,15 @@ class HospitalsController < ApplicationController
     else
       {lat:'',lng:'', result: false}
     end
+  end
+
+  # 複数の病院の中心(重心)座標を返します
+  # 複数の病院が空の場合は[NaN,NaN]が返ります
+  def center_of_gravity(hospitals)
+    latlng = hospitals.select(&:geocoded?).map{|x| [x.latitude, x.longitude] }
+    south, north = latlng.minmax { |x, y| x[0]<=>y[0] }
+    east, west = latlng.minmax { |x, y| x[1]<=>y[1] }
+    Geocoder::Calculations.geographic_center([east, south, west, north])
   end
 
   def geojson(hospitals)
