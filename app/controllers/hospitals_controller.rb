@@ -1,11 +1,14 @@
 class HospitalsController < ApplicationController
   def index
     jurisdiction = Jurisdiction.find_by(roman: params[:jurisdiction])
-    @current_location = location_params(params[:current_location])
+    @current_location = location_params(params)
+    @subject_ids = []
+    @subject_ids = params[:subjects][:ids] if params[:subjects].present?
     @jurisdictions = Jurisdiction.all
     @jurisdiction_selected = params[:jurisdiction] || 'chiba'
     @hospitals = search_hospital(params, jurisdiction)
     @center_of_gravity = center_of_gravity(@hospitals)
+    @stations = Station.all
     respond_to do |format|
       format.html
       format.geojson {render :json => geojson(@hospitals)}
@@ -13,24 +16,46 @@ class HospitalsController < ApplicationController
   end
 
   private
+
+  # location(geo_location,station)
+  # geo_location
+  # station(Station.id)
+
+  # km(1,2,3,5)
+
+  # jurisdiction(Jurisdiction.roman)
   def search_hospital(params, jurisdiction)
-    current_location = location_params(params[:current_location])
-    rel = Hospital
-    if params[:km].present? and current_location[:result]
+    current_location = location_params(params)
+
+    rel = Hospital.includes(:jurisdiction,:subjects)
+    if current_location[:result] and params[:km].present?
       rel = rel.within(params[:km].to_i, origin: [current_location[:lat], current_location[:lng]])
     end
-    rel = rel.where('subject LIKE ?',"%#{params[:subject]}%") if params[:subject].present?
+    rel = rel.where(:subjects => {:id => params[:subjects][:ids]}) if params[:subjects].present?
     rel = rel.where('name LIKE ?',"%#{params[:name]}%") if params[:name].present?
-    rel = rel.where("jurisdiction_id = ?", jurisdiction.id) if jurisdiction.present?
-    rel = rel.all if(params[:subject].blank? and jurisdiction.blank? and params[:name].blank? and params[:km].blank?)
-    rel.includes(:jurisdiction)
+    rel = rel.where(:jurisdiction => jurisdiction) if jurisdiction.present?
+    rel = rel.all if(jurisdiction.blank? and params[:name].blank? and params[:km].blank? and pamras[:subjects].blank?)
+    rel
   end
 
-  def location_params(current_location_param)
-    if current_location_param.present? and (splited = current_location_param.split(',')) and splited.size == 2
-      {lat:splited[0], lng: splited[1], result: true}
-    else
-      {lat:'',lng:'', result: false}
+  def location_params(params)
+    empty = {lat: '', lng: '', result: false}
+
+    case params[:location]
+      when 'station'
+        station = Station.find_by(:id => params[:station])
+        if station
+          {lat: station.latitude, lng: station.longitude, result: true}
+        else
+          empty
+        end
+      when 'geo_location'
+        geo_location = params[:geo_location]
+        if geo_location.present? and (splited = geo_location.split(',')) and splited.size == 2
+          {lat: splited.first, lng: splited.second, result: true}
+        else
+          empty
+        end
     end
   end
 
@@ -55,7 +80,7 @@ class HospitalsController < ApplicationController
            :phone_number => hospital.phone_number,
            :saikei       => hospital.saikei,
            :niji         => hospital.niji,
-           :subject      => hospital.subject,
+           :subject      => hospital.orgin_subject,
            :zip_code     => hospital.zip_code,
        }
       }

@@ -7,7 +7,8 @@
         <div class="col-sm-12">
           <div class="radio">
             <label>
-              <input type="radio" name="location" value="geolocation" checked="">
+              <%= radio_button_tag(:location,:geo_location,:checked => params[:location] == 'geo_location') %>
+              <%= hidden_field_tag(:geo_location) -%>
               現在地から
             </label>
           </div>
@@ -17,28 +18,24 @@
         <div class="col-sm-12">
           <div class="radio">
             <label>
-              <input type="radio" name="location" value="station">
+              <%= radio_button_tag(:location,:station,:checked => params[:location] == 'station') %>
               駅から
             </label>
           </div>
         </div>
       </div>
       <div class="row">
-        <div class="col-sm-6">
-          <div class="form-group">
-            <select class="form-control">
-              <option>路線</option>
-            </select>
-          </div>
-        </div>
+        <!--<div class="col-sm-6">-->
+          <!--<div class="form-group">-->
+            <!--<select class="form-control">-->
+              <!--<option>路線</option>-->
+            <!--</select>-->
+          <!--</div>-->
+        <!--</div>-->
 
-        <div class="col-sm-6">
+        <div class="col-sm-12">
           <div class="form-group">
-            <select class="form-control">
-              <option>駅名</option>
-              <option>松戸</option>
-              <option>六高台</option>
-            </select>
+            <%= select_tag 'station', options_from_collection_for_select(@stations, :id, :name, :selected => params[:station]), :class => 'form-control' %>
           </div>
         </div>
       </div>
@@ -63,7 +60,7 @@
         <div class="col-md-12">
           <label for="subjects">診療科目</label>
           <div class="form-group">
-            <%= collection_check_boxes(:subjects, :ids, Subject.all, :code, :name, include_hidden: false) do |b| %>
+            <%= collection_check_boxes(:subjects, :ids, Subject.all, :id, :name, include_hidden: false,:checked => @subject_ids) do |b| %>
                 <%= b.label { b.check_box + b.text } %>
             <%- end %>
           </div>
