@@ -20,9 +20,7 @@ class HospitalsController < ApplicationController
   # location(geo_location,station)
   # geo_location
   # station(Station.id)
-
   # km(1,2,3,5)
-
   # jurisdiction(Jurisdiction.roman)
   def search_hospital(params, jurisdiction)
     current_location = location_params(params)
@@ -34,7 +32,7 @@ class HospitalsController < ApplicationController
     rel = rel.where(:subjects => {:id => params[:subjects][:ids]}) if params[:subjects].present?
     rel = rel.where('name LIKE ?',"%#{params[:name]}%") if params[:name].present?
     rel = rel.where(:jurisdiction => jurisdiction) if jurisdiction.present?
-    rel = rel.all if(jurisdiction.blank? and params[:name].blank? and params[:km].blank? and pamras[:subjects].blank?)
+    rel = rel.all if(jurisdiction.blank? and params[:name].blank? and params[:km].blank? and params[:subjects].blank?)
     rel
   end
 
@@ -56,6 +54,8 @@ class HospitalsController < ApplicationController
         else
           empty
         end
+      else
+        empty
     end
   end
 

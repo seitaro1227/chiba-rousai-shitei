@@ -7,8 +7,7 @@
         <div class="col-sm-12">
           <div class="radio">
             <label>
-              <%= radio_button_tag(:location,:geo_location,:checked => params[:location] == 'geo_location') %>
-              <%= hidden_field_tag(:geo_location) -%>
+              <%= radio_button_tag(:location,:geo_location,params[:location] == 'geo_location',{:disabled => params[:geo_location].blank?}) %>
               現在地から
             </label>
           </div>
@@ -18,12 +17,13 @@
         <div class="col-sm-12">
           <div class="radio">
             <label>
-              <%= radio_button_tag(:location,:station,:checked => params[:location] == 'station') %>
+              <%= radio_button_tag(:location,:station, params[:location] == 'station' ) %>
               駅から
             </label>
           </div>
         </div>
       </div>
+      <%= hidden_field_tag(:geo_location, params[:geo_location]) -%>
       <div class="row">
         <!--<div class="col-sm-6">-->
           <!--<div class="form-group">-->
@@ -107,20 +107,11 @@
   </ul>
 </div>
 <script>
-    function update_is_geolocation() {
-        if ($('select#current_location > option:selected').text() === '現在地') {
-            $('#is_geolocated').val('true');
-        } else {
-            $('#is_geolocated').val('false');
-        }
-    }
-
     var geolocation_callbacks = {
         success: function (e) {
             //　現在地を追加する
-            $('select#current_location').append(
-                $('<option value="">現在地</option>').val(e.coords.latitude + ',' + e.coords.longitude)
-            );
+            $('input#geo_location').val(e.coords.latitude + ',' + e.coords.longitude);
+            $('input#location_geo_location').prop('disabled', false);
         },
         error: function () {
             console.log("位置情報の取得に失敗しました。");
@@ -129,6 +120,5 @@
 
     $(function () {
         $.geolocation.get(geolocation_callbacks);
-        update_is_geolocation();
     });
 </script>
