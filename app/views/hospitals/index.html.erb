@@ -40,6 +40,11 @@
         attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
+      L.easyButton('fa-search', function (btn, map) {
+          //searchモーダルを開く
+          $('#searchModal').modal('show');
+      }).addTo(map);
+
     <% if params[:km].present? %>
       var circle = L.circle(center, {
           color: '#00bbff',
