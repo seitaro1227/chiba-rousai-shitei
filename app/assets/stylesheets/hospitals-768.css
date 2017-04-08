@@ -1,0 +1,21 @@
+/*スマホ表示用*/
+.navbar-toggle{
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.navbar{
+    min-height: 50px;
+    margin-bottom: 0;
+    min-height: 64px;
+}
+
+.navbar-brand{
+    font-size: 18px;
+    padding: 20px 15px;
+    height: 64px;
+}
+
+.leaflet-top {
+    top:64px;
+}

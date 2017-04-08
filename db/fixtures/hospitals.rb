@@ -1,11 +1,11 @@
 # "./data/hospital.xlsxからデータを取り込みます"
 keys = [
-    :jurisdiction, # "監督署"
+    :jurisdiction_id, # "監督署"
     :number, # "番号"
     :name, # "名　　　　　　　称"
     :zip_code, # "〒"
     :orgin_address, # "所　　　在　　　地"
-    :subject, # "診療科目"
+    :orgin_subject, # "診療科目"
     :saikei, # "採型"
     :niji, # "二次"
     :phone_number # "電 話"
@@ -16,6 +16,7 @@ sheet = Roo::Spreadsheet.open('./data/hospitals.xlsx').sheet(0)
 sheet.each_row_streaming(offset: 3) do |row|
   break if row.map(&:cell_value)[1].nil?
   cells = row.map(&:cell_value)
+  cells[0] = Jurisdiction.find_by(name: cells[0]).id
   unless cells.count == keys.size
     errors.puts "#セルのsizeが足りません.(自力で登録してください)"
     errors.puts "keys  = #{keys.to_s}"

@@ -7,8 +7,8 @@ Geocoder.configure(
   # http_proxy: nil,            # HTTP proxy server (user:pass@host:port)
   # https_proxy: nil,           # HTTPS proxy server (user:pass@host:port)
   api_key: ENV['GOOGLE_MAPS_API_KEY'],               # API key for geocoding service
-  # cache: nil,                 # cache object (must respond to #[], #[]=, and #keys)
-  # cache_prefix: 'geocoder:',  # prefix (string) to use for all cache keys
+  cache: ActiveSupport::Cache::FileStore.new([Rails.root, 'data/tmp', 'geocoder'].join('/'), { expires_in: 90.days }),                 # cache object (must respond to #[], #[]=, and #keys)
+  cache_prefix: 'geocoder:',  # prefix (string) to use for all cache keys
 
   # Exceptions that should not be rescued by default
   # (if you want to implement custom error handling);

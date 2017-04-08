@@ -1,4 +1,5 @@
 source 'https://rubygems.org'
+ruby '2.4.0'
 
 git_source(:github) do |repo_name|
   repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?("/")
@@ -35,11 +36,14 @@ gem 'jbuilder', '~> 2.5'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
-# bootstrap
+# フロント
 gem 'honoka-rails'
+
 # excelの読み込み
 gem 'roo'
 gem 'seed-fu'
+
+# ジオコーディング
 gem 'geocoder'
 gem 'geokit-rails'
 

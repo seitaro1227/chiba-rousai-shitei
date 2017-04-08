@@ -1,0 +1,144 @@
+<div id="searchModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title"><span class="glyphicon glyphicon-search" aria-hidden="true"></span> 検索</h4>
+      </div>
+      <div class="modal-body">
+        <div>
+          <%= form_tag hospitals_path, method: 'get' do %>
+              <div class="row">
+                <div class="col-sm-12"><label>出発地点</label></div>
+              </div>
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="radio">
+                    <label>
+                      <%= radio_button_tag(:location,:geo_location,params[:location] == 'geo_location',{:disabled => params[:geo_location].blank?}) %>
+                      現在地から
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="radio">
+                    <label>
+                      <%= radio_button_tag(:location,:station, params[:location] == 'station' ) %>
+                      駅から
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <%= hidden_field_tag(:geo_location, params[:geo_location]) -%>
+              <div class="row">
+                <!--<div class="col-sm-6">-->
+                <!--<div class="form-group">-->
+                <!--<select class="form-control">-->
+                <!--<option>路線</option>-->
+                <!--</select>-->
+                <!--</div>-->
+                <!--</div>-->
+
+                <div class="col-sm-12">
+                  <div class="form-group">
+                    <%= select_tag 'station', options_from_collection_for_select(@stations, :id, :name, :selected => params[:station]), :class => 'form-control' %>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <label for="km">距離</label>
+                    <%- @km_options = [%w"1km 2km 3km 5km 10km", %w"1 2 3 5 10"].transpose %>
+                    <%= select_tag 'km', options_for_select(@km_options, selected: params[:km]), :include_blank => true, :class => 'form-control' %>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <label for="jurisdiction">監督所</label>
+                    <%= select_tag 'jurisdiction', options_from_collection_for_select(@jurisdictions, :roman, :name, :selected => @jurisdiction_selected), :class => 'form-control' %>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12">
+                  <label for="subjects">診療科目</label>
+                  <div class="form-group">
+                    <%= collection_check_boxes(:subjects, :ids, @subjects, :id, :name, include_hidden: false,:checked => @subject_ids) do |b| %>
+                        <%= b.label { b.check_box + b.text } %>
+                    <%- end %>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <label for="name">病院名</label>
+                    <%= text_field_tag 'name', params[:name], :class => 'form-control input-md' %>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <%= button_tag 'マップに表示する',:type=> :submit,:class => 'btn btn-primary' %>
+                  </div>
+                </div>
+              </div>
+          <% end -%>
+        </div>
+        <div>
+          <ul class="list-group">
+            <% @hospitals.each_with_index do |hospital, index| %>
+                <li class="list-group-item">
+                  <a data-toggle="collapse" href="#lg<%= index -%>">
+                    <% unless hospital.geocoded? %>
+                        <span class="label label-danger">位置情報なし</span>
+                    <% end -%>
+                    <%= hospital.name %>
+                  </a>
+                  <div id="lg<%= index -%>" class="panel-collapse collapse">
+                    <ul>
+                      <li>診療科目: <%= hospital.orgin_subject %></li>
+                      <li>住所: <%= hospital.address %></li>
+                      <li>電話: <%= hospital.phone_number %></li>
+                      <li>採型:<%= hospital.saikei %></li>
+                      <li>二次:<%= hospital.niji %></li>
+                    </ul>
+                  </div>
+                </li>
+            <%- end %>
+          </ul>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <%= button_tag 'マップに表示する',:type => 'button', :name => nil, :class => 'btn btn-primary', :onclick => 'submit_search_modal()' %>
+        <%= button_tag '閉じる',:type => 'button', :name => nil, :class => 'btn btn-default', 'data-dismiss' => 'modal' %>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+    var geolocation_callbacks = {
+        success: function (e) {
+            //　現在地を追加する
+            $('input#geo_location').val(e.coords.latitude + ',' + e.coords.longitude);
+            $('input#location_geo_location').prop('disabled', false);
+        },
+        error: function () {
+            console.log("位置情報の取得に失敗しました。");
+        }
+    };
+
+    function submit_search_modal() {
+        document.querySelector("#searchModal form").submit();
+    }
+
+    $(function () {
+        $.geolocation.get(geolocation_callbacks);
+    });
+</script>

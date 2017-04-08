@@ -1,27 +1,65 @@
 <%= render 'header' %>
-<div class="section">
-  <div class="container">
-    <ul class="nav nav-tabs">
-      <li class="active"><a data-toggle="tab" href="#content_list">一覧</a></li>
-      <li><a data-toggle="tab" href="#content_map">マップ</a></li>
-    </ul>
-    <div class="tab-content">
-      <div id="content_list" class="tab-pane active">
-        <%= render 'list' %>
-      </div>
-      <div id="content_map" class="tab-pane ">
-        <%= render 'map' %>
-      </div>
-    </div>
-  </div>
-</div>
-<script async defer
-        src="https://maps.googleapis.com/maps/api/js?v=3&key=<%= ENV['GOOGLE_MAPS_API_KEY'] %>&callback=initMap">
-</script>
-<script type="text/javascript" charset="utf-8">
-    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-       if ($(e.target).attr('href') === '#content_map'){
-           mapResize();
-       }
-    })
+<%= render 'search_modal' %>
+<div id="map"></div>
+<style>
+  #map {
+    width: 100%;
+    height: 700px;
+  }
+</style>
+<style>body { padding: 0; margin: 0; } html, body, #map { height: 100vh; width: 100vw; }</style>
+<script>
+  $(function () {
+    <% if @current_location[:result] %>
+    // current_location
+    center = L.latLng(<%= @current_location[:lat] %>, <%= @current_location[:lng] %>);
+    <% elsif not @center_of_gravity.first.nan? %>
+    // 重心点
+    center = L.latLng(<%= @center_of_gravity.first %>, <%= @center_of_gravity.second %>);
+    <% else %>
+    // 千葉駅の座標
+    var center = L.latLng(35.6129259, 140.1134781);
+    <% end %>
+    var map = L.map('map').setView(center, 13);
+    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+      L.easyButton('fa-search', function (btn, map) {
+          //searchモーダルを開く
+          $('#searchModal').modal('show');
+      }).addTo(map);
+
+      L.easyButton('fa-question-circle', function (btn, map) {
+          // aboutモーダルを開く
+          location.href = "<%= static_pages_about_url -%>";
+          console.log("click about button");
+      }).addTo(map);
+
+
+    <% if params[:km].present? %>
+      var circle = L.circle(center, {
+          color: '#00bbff',
+          fillColor: '#00bbff',
+          fillOpacity: 0.3,
+          radius: <%= params[:km].to_i * 1000 -%>
+      }).addTo(map);
+      var center_circle = L.circle(center, {
+          color: '#0099dd',
+          fillColor: '#0099dd',
+          fillOpacity: 1,
+          radius: 50
+      }).addTo(map);
+    <% end -%>
+    var geojson = <%= @geojson.to_json.html_safe -%>;
+    var current_geojson = L.geoJson(geojson)
+        .bindPopup(function (layer) {
+            return layer.feature.properties.name + '<br>' +
+                '住所:'+ layer.feature.properties.address + '<br>' +
+                'TEL:'+ layer.feature.properties.phone_number + '<br>' +
+                '診療科:'+ layer.feature.properties.subject;
+        });
+    current_geojson.addTo(map);
+  });
+
 </script>

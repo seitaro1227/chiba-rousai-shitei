@@ -1,0 +1,24 @@
+<%= render 'hospitals/header' %>
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <h1>トップページ</h1>
+      <h2>位置情報から探す</h2>
+      <%= render 'geolocation_search' %>
+      <h2>監督署のエリアから探す</h2>
+      <%= form_tag(hospitals_path, :method => :get, :id => :geolocation ) do %>
+        <%= select_tag 'jurisdiction',options_from_collection_for_select(@jurisdictions, :roman, :name, :selected => @jurisdiction_selected) %>
+          <span>の</span><button type="submit">労働基準局から探す</button>
+      <%- end %>
+      <!--<h2>路線から探す</h2>-->
+      <!--<select name="" id="">-->
+        <!--<option value="">JR 常磐線</option>-->
+        <!--<option value="">新京成電鉄</option>-->
+      <!--</select>-->
+      <!--<select name="" id="">-->
+        <!--<option value="">駅名を動的に作る</option>-->
+      <!--</select>-->
+    </div>
+  </div>
+</div>
+
