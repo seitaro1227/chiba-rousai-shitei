@@ -5,13 +5,15 @@ class HospitalsController < ApplicationController
     @subject_ids = []
     @subject_ids = params[:subjects][:ids] if params[:subjects].present?
     @jurisdictions = Jurisdiction.all
-    @jurisdiction_selected = params[:jurisdiction] || 'chiba'
+    @subjects = Subject.all
+    @jurisdiction_selected = params[:jurisdiction] || 'kashiwa'
     @hospitals = search_hospital(params, jurisdiction)
     @center_of_gravity = center_of_gravity(@hospitals)
     @stations = Station.all
+    @geojson = geojson(@hospitals)
     respond_to do |format|
       format.html
-      format.geojson {render :json => geojson(@hospitals)}
+      format.geojson {render :json => @geojson}
     end
   end
 
