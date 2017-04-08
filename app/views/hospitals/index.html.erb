@@ -51,22 +51,15 @@
           radius: 50
       }).addTo(map);
     <% end -%>
-    var current_geojson;
-    var url = '<%= hospitals_path(:format => :geojson) -%>';
-    var data = <%= params.to_json.html_safe -%>;
-    $.getJSON(url, data, function (geojson) {
-        if(typeof(current_geojson) !== "undefined"){
-            current_geojson.remove(map);
-        }
-        current_geojson = L.geoJson(geojson)
-            .bindPopup(function (layer) {
-                return layer.feature.properties.name + '<br>' +
-                       '住所:'+ layer.feature.properties.address + '<br>' +
-                       'TEL:'+ layer.feature.properties.phone_number + '<br>' +
-                       '診療科:'+ layer.feature.properties.subject;
-            });
-        current_geojson.addTo(map);
-    });
+    var geojson = <%= @geojson.to_json.html_safe -%>;
+    var current_geojson = L.geoJson(geojson)
+        .bindPopup(function (layer) {
+            return layer.feature.properties.name + '<br>' +
+                '住所:'+ layer.feature.properties.address + '<br>' +
+                'TEL:'+ layer.feature.properties.phone_number + '<br>' +
+                '診療科:'+ layer.feature.properties.subject;
+        });
+    current_geojson.addTo(map);
   });
 
 </script>

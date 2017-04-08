@@ -9,9 +9,10 @@ class HospitalsController < ApplicationController
     @hospitals = search_hospital(params, jurisdiction)
     @center_of_gravity = center_of_gravity(@hospitals)
     @stations = Station.all
+    @geojson = geojson(@hospitals)
     respond_to do |format|
       format.html
-      format.geojson {render :json => geojson(@hospitals)}
+      format.geojson {render :json => @geojson}
     end
   end
 
