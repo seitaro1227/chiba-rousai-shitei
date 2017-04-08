@@ -1,4 +1,4 @@
-<div class="navbar navbar-default navbar-static-top">
+<div class="navbar navbar-inverse navbar-fixed-top" style="opacity: 0.9;">
   <div class="container">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-ex-collapse">
@@ -7,19 +7,19 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="/"><span>千葉の労災指定医療機関を探す</span></a>
+      <%= link_to '千葉の労災指定病院を探す',root_path,:class => 'navbar-brand'  %>
     </div>
     <div class="collapse navbar-collapse" id="navbar-ex-collapse">
       <ul class="nav navbar-nav navbar-right">
-
         <li>
-          <a href="#" data-toggle="modal" data-target="#searchModal">詳細検索</a>
+          <a href="#" data-toggle="modal" data-target="#searchModal">
+            <span class="glyphicon glyphicon-search" aria-hidden="true"></span> 検索
+          </a>
         </li>
         <li>
-          <%= link_to 'Top', root_path  %>
-        </li>
-        <li>
-          <%= link_to 'このアプリについて', static_pages_about_path %>
+          <%= link_to static_pages_about_path do %>
+              <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> このアプリについて
+          <%- end %>
         </li>
       </ul>
     </div>

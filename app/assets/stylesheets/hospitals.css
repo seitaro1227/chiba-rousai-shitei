@@ -1,0 +1,18 @@
+.navbar{
+    margin-bottom: 0;
+}
+
+.modal-header {
+    /*border-radius: 5px 5px 0px 0px;*/
+    background-color: #333;
+    color: #eee;
+}
+.modal-footer {
+    /*border-radius: 0px 0px 5px 5px;*/
+    background-color: #eee;
+    color: #666;
+}
+
+.leaflet-top{
+    top:81px;
+}
