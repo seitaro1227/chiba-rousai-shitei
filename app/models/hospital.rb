@@ -1,6 +1,10 @@
 class Hospital < ApplicationRecord
   has_many :hospital_subjects, :dependent => :destroy
   has_many :subjects, :through => :hospital_subjects
+  validates :name, :presence => true
+  validates :address, :presence => true
+  validates :number, :presence => true, :uniqueness => true
+  validates :zip_code, :presence => true
 
   geocoded_by :address
   acts_as_mappable :default_units => :kms,

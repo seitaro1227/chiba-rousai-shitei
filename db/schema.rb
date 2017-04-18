@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170402160056) do
+ActiveRecord::Schema.define(version: 20170418171858) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -39,6 +39,7 @@ ActiveRecord::Schema.define(version: 20170402160056) do
     t.datetime "updated_at",      null: false
     t.string   "orgin_address"
     t.integer  "jurisdiction_id"
+    t.index ["number"], name: "index_hospitals_on_number", unique: true, using: :btree
   end
 
   create_table "jurisdictions", force: :cascade do |t|
@@ -46,6 +47,8 @@ ActiveRecord::Schema.define(version: 20170402160056) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string   "roman"
+    t.index ["name"], name: "index_jurisdictions_on_name", unique: true, using: :btree
+    t.index ["roman"], name: "index_jurisdictions_on_roman", unique: true, using: :btree
   end
 
   create_table "stations", force: :cascade do |t|
@@ -54,6 +57,7 @@ ActiveRecord::Schema.define(version: 20170402160056) do
     t.float    "longitude"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_stations_on_name", unique: true, using: :btree
   end
 
   create_table "subjects", force: :cascade do |t|
@@ -62,6 +66,8 @@ ActiveRecord::Schema.define(version: 20170402160056) do
     t.string   "short_name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["code"], name: "index_subjects_on_code", unique: true, using: :btree
+    t.index ["name"], name: "index_subjects_on_name", unique: true, using: :btree
   end
 
   add_foreign_key "hospital_subjects", "hospitals"
