@@ -10,9 +10,9 @@ development:
   <<: *default
   database: chiba-rousai-shitei_development
 
-#test:
-#  <<: *default
-#  database: chiba-rousai-shitei_test
+test:
+  <<: *default
+  database: chiba-rousai-shitei_test
 
 production:
   url: <%= ENV['DATABASE_URL'] %>
