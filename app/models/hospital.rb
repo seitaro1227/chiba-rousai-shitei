@@ -15,11 +15,11 @@ class Hospital < ApplicationRecord
   after_validation :geocode, if: :address_changed?
   belongs_to :jurisdiction
 
-  scope :within_near, ->(params, current_location) do
+  scope :within_near, ->(params, current_location) {
     if current_location[:result] and params[:km].present?
       within(params[:km], origin: [current_location[:lat], current_location[:lng]])
     end
-  end
+  }
   scope :order_by_distance,->(current_location){
     by_distance(origin: [current_location[:lat], current_location[:lng]]) if current_location[:result]
   }
