@@ -21,11 +21,14 @@
     function getCenter() {
         var geo_location = $('#geo_location');
         var station = $('#station option:selected');
-        if (geo_location.data('data-current_location_result')) {
-            // パラメータに指定のある場合はcurrent_location_*から座標を取得する
+        if ($("[name='location']:checked").val() === 'geo_location'){
+            // 現在地からにチェックが入っている場合
+            // geo_locationから座標を取得
             return [geo_location.data('latitude'), geo_location.data('longitude')];
-        } else {
-            // パラメータに指定のない場合はstationの初期選択から座標を取得する
+        }else{
+            // stationにチェックが入っている場合
+            // パラメータに指定のない場合
+            // 選択されたstationから座標を取得
             return [station.data('latitude'), station.data('longitude')];
         }
     }
@@ -97,13 +100,18 @@
                 //　現在地を追加する
                 $('input#geo_location').val(e.coords.latitude + ',' + e.coords.longitude)
                     .data({
+                        result: true,
                         latitude: e.coords.latitude,
                         longitude: e.coords.longitude
                     });
-                debugger;
                 $('input#location_geo_location').prop('disabled', false);
             },
             error: function () {
+                $('input#geo_location').data({
+                    result: false,
+                    latitude: null,
+                    longitude: null
+                });
                 console.log("位置情報の取得に失敗しました。");
             }
         };

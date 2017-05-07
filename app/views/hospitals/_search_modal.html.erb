@@ -15,7 +15,12 @@
                 <div class="col-sm-12">
                   <div class="radio">
                     <label>
-                      <%= radio_button_tag(:location,:geo_location,params[:location] == 'geo_location',{:disabled => params[:geo_location].blank?}) %>
+                      <%= radio_button_tag(:location,:geo_location,params[:location] == 'geo_location',
+                                           {:disabled => params[:geo_location].blank?,
+                                            :'data-result'=> params[:location] == 'geo_location',
+                                            :'data-latitude'=> @current_location[:lat],
+                                            :'data-longitude'=> @current_location[:lng],
+                                           }) %>
                       現在地から
                     </label>
                   </div>
