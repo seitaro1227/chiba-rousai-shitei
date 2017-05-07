@@ -27,7 +27,7 @@ class Hospital < ApplicationRecord
     where(subjects: {id: params[:subjects][:ids]}) if params[:subjects].present?
   }
   scope :like_name, ->(params) {
-    where('name LIKE ?', "%#{params[:name]}%") if params[:name].present?
+    where('hospitals.name LIKE ?', "%#{params[:name]}%") if params[:name].present?
   }
   scope :eq_jurisdiction, ->(jurisdiction) {
     where(jurisdiction: jurisdiction) if jurisdiction.present?

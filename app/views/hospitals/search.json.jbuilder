@@ -1,6 +1,5 @@
 json.hospitals do
   json.array!(@hospitals) do |hospital|
-    json.properties do
       json.number       hospital.number
       json.name         hospital.name
       json.address      hospital.address
@@ -10,6 +9,5 @@ json.hospitals do
       json.niji         hospital.niji
       json.subject      hospital.orgin_subject
       json.zip_code     hospital.zip_code
-    end
   end
 end
