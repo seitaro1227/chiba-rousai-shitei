@@ -16,6 +16,14 @@ class HospitalsController < ApplicationController
     end
   end
 
+  def search
+    @hospitals = Hospital.search(params)
+    respond_to do |format|
+      format.json
+      format.geojson
+    end
+  end
+
   private
   # 複数の病院の中心(重心)座標を返します
   # 複数の病院が空の場合は[NaN,NaN]が返ります
