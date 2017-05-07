@@ -1,3 +1,19 @@
+# == Schema Information
+#
+# Table name: stations
+#
+#  id         :integer          not null, primary key
+#  name       :string
+#  latitude   :float
+#  longitude  :float
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#
+# Indexes
+#
+#  index_stations_on_name  (name) UNIQUE
+#
+
 class Station < ApplicationRecord
   validates :name, :presence => true, uniqueness: true
 

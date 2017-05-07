@@ -1,3 +1,20 @@
+# == Schema Information
+#
+# Table name: subjects
+#
+#  id         :integer          not null, primary key
+#  code       :string
+#  name       :string
+#  short_name :string
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#
+# Indexes
+#
+#  index_subjects_on_code  (code) UNIQUE
+#  index_subjects_on_name  (name) UNIQUE
+#
+
 FactoryGirl.define do
   factory :subject do
     sequence(:code){|n| "8#{format('%02d',n)}"}
