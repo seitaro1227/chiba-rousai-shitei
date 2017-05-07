@@ -1,65 +1,161 @@
 <%= render 'header' %>
 <%= render 'search_modal' %>
-<div id="map"></div>
+<%= content_tag(:div, nil,{id: 'map',
+                           :'data-search_geojosn_url' => hospitals_search_url,
+                           :'data-pages_about_url' => static_pages_about_url,
+                           :'data-zoom' => params[:zoom] || 13,
+                           :'data-km' => params[:km],
+                           :'data-current_location_result' => @current_location[:result],
+                           :'data-current_location_lat' => @current_location[:lat],
+                           :'data-current_location_lng' => @current_location[:lng],
+} )%>
 <style>
-  #map {
-    width: 100%;
-    height: 700px;
-  }
+  body { padding: 0; margin: 0; }
+  html, body, #map { height: 100vh; width: 100vw; }
 </style>
-<style>body { padding: 0; margin: 0; } html, body, #map { height: 100vh; width: 100vw; }</style>
 <script>
-  $(function () {
-    <% if @current_location[:result] %>
-    // current_location
-    center = L.latLng(<%= @current_location[:lat] %>, <%= @current_location[:lng] %>);
-    <% elsif not @center_of_gravity.first.nan? %>
-    // 重心点
-    center = L.latLng(<%= @center_of_gravity.first %>, <%= @center_of_gravity.second %>);
-    <% else %>
-    // 千葉駅の座標
-    var center = L.latLng(35.6129259, 140.1134781);
-    <% end %>
-    var map = L.map('map').setView(center, 13);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
+    var map;
+    var currentGeojson;
+    var currentCircle;
 
-      L.easyButton('fa-search', function (btn, map) {
-          //searchモーダルを開く
-          $('#searchModal').modal('show');
-      }).addTo(map);
+    function getCenter() {
+        var geo_location = $('#geo_location');
+        var station = $('#station option:selected');
+        if ($("[name='location']:checked").val() === 'geo_location'){
+            // 現在地からにチェックが入っている場合
+            // geo_locationから座標を取得
+            return [geo_location.data('latitude'), geo_location.data('longitude')];
+        }else{
+            // stationにチェックが入っている場合
+            // パラメータに指定のない場合
+            // 選択されたstationから座標を取得
+            return [station.data('latitude'), station.data('longitude')];
+        }
+    }
 
-      L.easyButton('fa-question-circle', function (btn, map) {
-          // aboutモーダルを開く
-          location.href = "<%= static_pages_about_url -%>";
-          console.log("click about button");
-      }).addTo(map);
+    function getMapData() {
+        return {
+            zoom: $('#map').data('zoom'),
+            km: $('#map').data('km'),
+            pages_about_url: $('#map').data('pages_about_url')
+        };
+    }
 
+    // ajaxでgeojsonを取得してmapに追加する
+    //検索用のparmsは
+    function updateCircle(center, km) {
+        if(typeof(currentCircle) !== 'undefined'){
+            map.removeLayer(currentCircle);
+        }
 
-    <% if params[:km].present? %>
-      var circle = L.circle(center, {
-          color: '#00bbff',
-          fillColor: '#00bbff',
-          fillOpacity: 0.3,
-          radius: <%= params[:km].to_i * 1000 -%>
-      }).addTo(map);
-      var center_circle = L.circle(center, {
-          color: '#0099dd',
-          fillColor: '#0099dd',
-          fillOpacity: 1,
-          radius: 50
-      }).addTo(map);
-    <% end -%>
-    var geojson = <%= @geojson.to_json.html_safe -%>;
-    var current_geojson = L.geoJson(geojson)
-        .bindPopup(function (layer) {
-            return layer.feature.properties.name + '<br>' +
-                '住所:'+ layer.feature.properties.address + '<br>' +
-                'TEL:'+ layer.feature.properties.phone_number + '<br>' +
-                '診療科:'+ layer.feature.properties.subject;
+        var circle = L.circle(center, {
+            color: '#00bbff',
+            fillColor: '#00bbff',
+            fillOpacity: 0.3,
+            radius: km * 1000
         });
-    current_geojson.addTo(map);
-  });
+        var center_circle = L.circle(center, {
+            color: '#0099dd',
+            fillColor: '#0099dd',
+            fillOpacity: 1,
+            radius: 50
+        });
+
+        currentCircle = L.layerGroup([circle,center_circle]);
+        currentCircle.addTo(map);
+    }
+
+    function updateMap() {
+        var search_geojosn_url = $('#map').data('search_geojosn_url');
+        var serialize = $('#searchModal form').serialize();
+        var center = getCenter();
+        var map_data = getMapData();
+        //移動する
+        map.setView(getCenter(), map.zoom);
+
+        // Circleを表示する
+        var km =$('#km option:selected').val();
+        if (km !== '') {
+            updateCircle(center, parseInt(km));
+        }
+
+        $.getJSON(search_geojosn_url + '?' + serialize, function(geojson) {
+            if(typeof(currentGeojson) !== 'undefined'){
+                map.removeLayer(currentGeojson);
+            }
+            currentGeojson = L.geoJson(geojson)
+                .bindPopup(function (layer) {
+                    return layer.feature.properties.name + '<br>' +
+                        '住所:'+ layer.feature.properties.address + '<br>' +
+                        'TEL:'+ layer.feature.properties.phone_number + '<br>' +
+                        '診療科:'+ layer.feature.properties.subject;
+                });
+            currentGeojson.addTo(map);
+
+        });
+    }
+
+    function updateGeolocation() {
+        var callbacks = {
+            success: function (e) {
+                //　現在地を追加する
+                $('input#geo_location').val(e.coords.latitude + ',' + e.coords.longitude)
+                    .data({
+                        result: true,
+                        latitude: e.coords.latitude,
+                        longitude: e.coords.longitude
+                    });
+                $('input#location_geo_location').prop('disabled', false);
+            },
+            error: function () {
+                $('input#geo_location').data({
+                    result: false,
+                    latitude: null,
+                    longitude: null
+                });
+                console.log("位置情報の取得に失敗しました。");
+            }
+        };
+        $.geolocation.get(callbacks);
+    }
+
+    $(function () {
+        updateGeolocation();
+        // 現在地のチェックボックを操作した時に再取得
+        $('#location_geo_location').on('click',function () {
+            updateGeolocation();
+        });
+        var map_data = getMapData();
+        map = L.map('map');
+        map.setView(getCenter(), map_data.zoom);
+        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        //searchモーダルを開く
+        L.easyButton('fa-search', function (btn, map) {
+            $('#searchModal').modal('show');
+        }).addTo(map);
+
+        //searchモーダル
+        $("#searchModal form").change(function(){
+            $("#searchModal form").submit();
+        });
+
+        // aboutモーダルを開く
+        L.easyButton('fa-question-circle', function (btn, map) {
+            location.href = map_data.pages_about_url;
+            console.log("click about button");
+        }).addTo(map);
+
+        // モーダルを閉じた時にupdateMapを呼び出す
+        $('#searchModal').on('hide.bs.modal', function () {
+            console.log('updateMap');
+            updateMap();
+        });
+
+        // ajaxでgeojsonを取得してmapに追加する
+        updateMap();
+    });
 
 </script>

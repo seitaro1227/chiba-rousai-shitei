@@ -7,7 +7,7 @@
       </div>
       <div class="modal-body">
         <div>
-          <%= form_tag hospitals_path, method: 'get' do %>
+          <%= form_tag hospitals_search_path, method: 'get',remote:true do %>
               <div class="row">
                 <div class="col-sm-12"><label>出発地点</label></div>
               </div>
@@ -15,7 +15,12 @@
                 <div class="col-sm-12">
                   <div class="radio">
                     <label>
-                      <%= radio_button_tag(:location,:geo_location,params[:location] == 'geo_location',{:disabled => params[:geo_location].blank?}) %>
+                      <%= radio_button_tag(:location,:geo_location,params[:location] == 'geo_location',
+                                           {:disabled => params[:geo_location].blank?,
+                                            :'data-result'=> params[:location] == 'geo_location',
+                                            :'data-latitude'=> @current_location[:lat],
+                                            :'data-longitude'=> @current_location[:lng],
+                                           }) %>
                       現在地から
                     </label>
                   </div>
@@ -43,7 +48,12 @@
 
                 <div class="col-sm-12">
                   <div class="form-group">
-                    <%= select_tag 'station', options_from_collection_for_select(@stations, :id, :name, :selected => params[:station]), :class => 'form-control' %>
+                    <%= select_tag 'station',
+                                   options_for_select(@stations.map {|s|
+                                     [s.name, s.id, {:'data-latitude' => s.latitude, :'data-longitude' => s.longitude}]
+                                   },selected: params[:station]),
+                                   class: 'form-control'
+                    %>
                   </div>
                 </div>
               </div>
@@ -85,60 +95,24 @@
               <div class="row">
                 <div class="col-md-12">
                   <div class="form-group">
-                    <%= button_tag 'マップに表示する',:type=> :submit,:class => 'btn btn-primary' %>
+                    <%= button_tag 'update', :type => 'submit', :name => nil, id: 'search_update', :class => 'btn btn-primary',:style=> 'display:none' %>
+                    <%= button_tag 'マップを見る',:type => 'button', :name => nil,'data-dismiss' => 'modal', :class => 'btn btn-primary' %>
                   </div>
                 </div>
               </div>
+
           <% end -%>
         </div>
         <div>
-          <ul class="list-group">
-            <% @hospitals.each_with_index do |hospital, index| %>
-                <li class="list-group-item">
-                  <a data-toggle="collapse" href="#lg<%= index -%>">
-                    <% unless hospital.geocoded? %>
-                        <span class="label label-danger">位置情報なし</span>
-                    <% end -%>
-                    <%= hospital.name %>
-                  </a>
-                  <div id="lg<%= index -%>" class="panel-collapse collapse">
-                    <ul>
-                      <li>診療科目: <%= hospital.orgin_subject %></li>
-                      <li>住所: <%= hospital.address %></li>
-                      <li>電話: <%= hospital.phone_number %></li>
-                      <li>採型:<%= hospital.saikei %></li>
-                      <li>二次:<%= hospital.niji %></li>
-                    </ul>
-                  </div>
-                </li>
-            <%- end %>
+          <ul class="list-group" id="search-hospitals">
+            <%= render @hospitals %>
+            <!--ここをajaxで書き換える-->
           </ul>
         </div>
       </div>
       <div class="modal-footer">
-        <%= button_tag 'マップに表示する',:type => 'button', :name => nil, :class => 'btn btn-primary', :onclick => 'submit_search_modal()' %>
-        <%= button_tag '閉じる',:type => 'button', :name => nil, :class => 'btn btn-default', 'data-dismiss' => 'modal' %>
+        <%= button_tag 'マップを見る',:type => 'button', :name => nil, 'data-dismiss' => 'modal', :class => 'btn btn-primary' %>
       </div>
     </div>
   </div>
 </div>
-<script>
-    var geolocation_callbacks = {
-        success: function (e) {
-            //　現在地を追加する
-            $('input#geo_location').val(e.coords.latitude + ',' + e.coords.longitude);
-            $('input#location_geo_location').prop('disabled', false);
-        },
-        error: function () {
-            console.log("位置情報の取得に失敗しました。");
-        }
-    };
-
-    function submit_search_modal() {
-        document.querySelector("#searchModal form").submit();
-    }
-
-    $(function () {
-        $.geolocation.get(geolocation_callbacks);
-    });
-</script>

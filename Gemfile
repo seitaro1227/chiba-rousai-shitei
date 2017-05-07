@@ -39,22 +39,31 @@ gem 'jbuilder', '~> 2.5'
 # フロント
 gem 'honoka-rails'
 
-# excelの読み込み
-gem 'roo'
-gem 'seed-fu'
 
 # ジオコーディング
 gem 'geocoder'
 gem 'geokit-rails'
 
 group :development, :test do
-  # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem 'byebug', platform: :mri
+  # excelの読み込み
+  gem 'roo'
+  gem 'seed-fu'
+  # N+1問題の検出
+  gem 'bullet'
+
   gem 'pry-rails'
+  gem 'pry-coolline'
+  gem 'pry-byebug'
+
+  # Rspec
+  gem 'rspec-rails'
+  gem "factory_girl_rails", "~> 4.0"
+  gem 'faker'
+  gem 'ffaker'
+  gem 'shoulda-matchers', '~> 3.1'
+
   gem 'dotenv-rails'
 end
-
-gem "rails_12factor", group: :production
 
 group :development do
   # Access an IRB console on exception pages or by using <%= console %> anywhere in the code.
@@ -63,10 +72,16 @@ group :development do
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
+  gem 'spring-commands-rspec'
+
   # IntelliJ IDEA デバッグ
   gem 'ruby-debug-ide'
   gem 'debase'
+
+  gem 'annotate'
+  gem 'better_errors'
 end
 
+gem "rails_12factor", group: :production
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
