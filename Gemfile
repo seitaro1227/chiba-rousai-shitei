@@ -39,10 +39,14 @@ gem 'jbuilder', '~> 2.5'
 # フロント
 gem 'honoka-rails'
 
-
 # ジオコーディング
 gem 'geocoder'
 gem 'geokit-rails'
+
+# ユーザー登録
+gem 'devise'
+# gem 'devise-i18n'
+gem 'validates_email_format_of'
 
 group :development, :test do
   # excelの読み込み
