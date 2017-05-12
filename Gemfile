@@ -61,6 +61,8 @@ group :development, :test do
 
   # Rspec
   gem 'rspec-rails'
+  gem 'test-unit'
+  gem 'rails-controller-testing'
   gem "factory_girl_rails", "~> 4.0"
   gem 'faker'
   gem 'ffaker'

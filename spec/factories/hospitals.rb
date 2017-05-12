@@ -32,6 +32,9 @@ FactoryGirl.define do
     zip_code '271-8587'
     niji ''
     saikei ''
+    factory :invalid_hospital do
+      name ''
+    end
     factory :nichidai_matsudo_shika do
       number '1231766'
       name "学校法人　日本大学　日本大学松戸歯学部付属病院"
