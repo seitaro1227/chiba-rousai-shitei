@@ -1,6 +1,6 @@
 class Admin::HospitalsController < ApplicationController
   before_action :set_hospital, only: [:show, :edit, :update, :destroy]
-  # before_action :authenticate_admin
+  before_action :authenticate_admin
 
   # GET /admin/hospitals
   # GET /admin/hospitals.json
@@ -26,29 +26,20 @@ class Admin::HospitalsController < ApplicationController
   # POST /admin/hospitals.json
   def create
     @hospital = Hospital.new(hospital_params)
-
-    respond_to do |format|
-      if @hospital.save
-        format.html { redirect_to @hospital, notice: 'Hospital was successfully created.' }
-        format.json { render :show, status: :created, location: @hospital }
-      else
-        format.html { render :new }
-        format.json { render json: @hospital.errors, status: :unprocessable_entity }
-      end
+    if @hospital.save
+      redirect_to [:admin, @hospital], notice: 'Hospital was successfully created.'
+    else
+      render :new
     end
   end
 
   # PATCH/PUT /admin/hospitals/1
   # PATCH/PUT /admin/hospitals/1.json
   def update
-    respond_to do |format|
-      if @hospital.update(hospital_params)
-        format.html { redirect_to @hospital, notice: 'Hospital was successfully updated.' }
-        format.json { render :show, status: :ok, location: @hospital }
-      else
-        format.html { render :edit }
-        format.json { render json: @hospital.errors, status: :unprocessable_entity }
-      end
+    if @hospital.update(hospital_params)
+      redirect_to [:admin, @hospital], notice: 'Hospital was successfully updated.'
+    else
+      render :edit
     end
   end
 
@@ -63,8 +54,10 @@ class Admin::HospitalsController < ApplicationController
   end
 
   private
+    REALM = controller_name
+    USERS = { "admin" => Digest::MD5::hexdigest(["admin", controller_name, ENV['ADMIN_PASSWORD']].join(":")) }
     # Use callbacks to share common setup or constraints between actions.
-    def set_admin_hospital
+    def set_hospital
       @hospital = Hospital.find(params[:id])
     end
 
@@ -74,12 +67,6 @@ class Admin::HospitalsController < ApplicationController
     end
 
     def authenticate_admin
-      p controller_name
-      user = { 'admin' =>
-                   Digest::MD5::hexdigest("admin:#{controller_name}:#{ENV['ADMIN_PASSWORD']}")
-      }
-      authenticate_or_request_with_http_digest(controller_name) do |username|
-        user[username]
-      end
+      authenticate_or_request_with_http_digest(REALM) {|username| USERS[username] }
     end
 end
