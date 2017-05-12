@@ -38,6 +38,7 @@ gem 'jbuilder', '~> 2.5'
 
 # フロント
 gem 'honoka-rails'
+gem 'simple_form'
 
 # ジオコーディング
 gem 'geocoder'
