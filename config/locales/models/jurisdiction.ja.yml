@@ -1,0 +1,11 @@
+ja:
+  activerecord:
+    models:
+      jurisdiction: 監督署
+      station: 駅
+      subject: 診療科目
+    attributes:
+      jurisdiction:
+        hospitals: :activerecord.models.hospital
+        name: 監督署名
+        roman: ローマ字
