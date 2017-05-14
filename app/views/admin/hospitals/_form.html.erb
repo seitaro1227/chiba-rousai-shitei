@@ -1,0 +1,25 @@
+<!--admin_hospital.errors.count-->
+<!--admin_hospital.errors.full_messages-->
+
+<%= simple_form_for [:admin, @hospital] do |f| %>
+    <%= render 'shared/error_messages', object: f.object %>
+    <%= f.input :number %>
+    <%= f.input :name, required: true %>
+    <%= f.association :jurisdiction, as: :select, prompt: "選択してください" %>
+
+    <%= f.input :zip_code %>
+    <%= f.input :address %>
+
+    <%= f.input :orgin_subject %>
+    <%= f.association :subjects, as: :check_boxes %>
+
+    <%= f.input :phone_number %>
+
+    <%= f.input :saikei %>
+    <%= f.input :niji %>
+
+    <%= f.input :latitude %>
+    <%= f.input :longitude %>
+
+    <%= f.button :submit %>
+<% end %>
