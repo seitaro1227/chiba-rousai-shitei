@@ -7,4 +7,8 @@ Rails.application.routes.draw do
   # namespace :map do
     resources :hospitals, :only => :index
   # end
+
+  namespace :admin do
+    resources :hospitals
+  end
 end

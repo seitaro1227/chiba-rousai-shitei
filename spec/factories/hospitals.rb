@@ -1,3 +1,28 @@
+# == Schema Information
+#
+# Table name: hospitals
+#
+#  id              :integer          not null, primary key
+#  number          :string
+#  name            :string
+#  zip_code        :string
+#  address         :string
+#  orgin_subject   :string
+#  saikei          :string
+#  niji            :string
+#  phone_number    :string
+#  latitude        :float
+#  longitude       :float
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  orgin_address   :string
+#  jurisdiction_id :integer
+#
+# Indexes
+#
+#  index_hospitals_on_number  (number) UNIQUE
+#
+
 FactoryGirl.define do
   factory :hospital do
     sequence(:number){|n| "212#{format('%04d', n)}"}
@@ -7,6 +32,9 @@ FactoryGirl.define do
     zip_code '271-8587'
     niji ''
     saikei ''
+    factory :invalid_hospital do
+      name ''
+    end
     factory :nichidai_matsudo_shika do
       number '1231766'
       name "学校法人　日本大学　日本大学松戸歯学部付属病院"

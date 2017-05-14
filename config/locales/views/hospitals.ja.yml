@@ -1,0 +1,31 @@
+ja:
+  admin:
+    hospitals:
+      index:
+        orgin_address: :activerecord.attributes.hospital.orgin_address
+        address:       :activerecord.attributes.hospital.address
+        subjects:      :activerecord.attributes.hospital.subjects
+        orgin_subject: :activerecord.attributes.hospital.orgin_subject
+        jurisdiction:  :activerecord.attributes.hospital.jurisdiction
+        latitude:      :activerecord.attributes.hospital.latitude
+        longitude:     :activerecord.attributes.hospital.longitude
+        name:          :activerecord.attributes.hospital.name
+        niji:          :activerecord.attributes.hospital.niji
+        number:        :activerecord.attributes.hospital.number
+        saikei:        :activerecord.attributes.hospital.saikei
+        phone_number:  :activerecord.attributes.hospital.phone_number
+        zip_code:      :activerecord.attributes.hospital.zip_code
+      show:
+        orgin_address: :activerecord.attributes.hospital.orgin_address
+        address:       :activerecord.attributes.hospital.address
+        subjects:      :activerecord.attributes.hospital.subjects
+        orgin_subject: :activerecord.attributes.hospital.orgin_subject
+        jurisdiction:  :activerecord.attributes.hospital.jurisdiction
+        latitude:      :activerecord.attributes.hospital.latitude
+        longitude:     :activerecord.attributes.hospital.longitude
+        name:          :activerecord.attributes.hospital.name
+        niji:          :activerecord.attributes.hospital.niji
+        number:        :activerecord.attributes.hospital.number
+        saikei:        :activerecord.attributes.hospital.saikei
+        phone_number:  :activerecord.attributes.hospital.phone_number
+        zip_code:      :activerecord.attributes.hospital.zip_code

@@ -1,0 +1,57 @@
+<div class="container">
+
+  <h1>病院の詳細</h1>
+  <table class="table table-striped table-bordered">
+    <tbody>
+    <tr>
+      <th><%= t('.number') %></th>
+      <td><%= @hospital.number %></td>
+    </tr>
+    <tr>
+      <th><%= t('.name') %></th>
+      <td><%= @hospital.name %></td>
+    </tr>
+    <tr>
+      <th><%= t('.jurisdiction') %></th>
+      <td><%= @hospital.jurisdiction %></td>
+    </tr>
+    <tr>
+      <th><%= t('.zip_code') %></th>
+      <td><%= @hospital.zip_code %></td>
+    </tr>
+    <tr>
+      <th><%= t('.address') %></th>
+      <td><%= @hospital.address %></td>
+    </tr>
+    <tr>
+      <th><%= t('.subjects') %></th>
+      <td>
+        <ul>
+          <% @hospital.subjects.each do |subject| %>
+              <li><%= subject.name %></li>
+          <%- end %>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th><%= t('.phone_number') %></th>
+      <td><%= @hospital.phone_number %></td>
+    </tr>
+    <tr>
+      <th><%= t('.saikei') %></th>
+      <td><%= @hospital.saikei %></td>
+    </tr>
+    <tr>
+      <th><%= t('.niji') %></th>
+      <td><%= @hospital.niji %></td>
+    </tr>
+    <tr>
+      <th><%= t('.latitude') %>,<%= t('.longitude') %></th>
+      <td>[<%= @hospital.latitude %>,<%= @hospital.longitude %>]</td>
+    </tr>
+    </tbody>
+  </table>
+
+  <%= link_to '編集', edit_admin_hospital_path(@hospital), class: [:btn, :'btn-default'] %>
+  <%= link_to '戻る', admin_hospitals_path, class: [:btn, :'btn-default'] %>
+</div>

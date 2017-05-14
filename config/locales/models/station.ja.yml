@@ -1,0 +1,9 @@
+ja:
+  activerecord:
+    models:
+      station: 駅
+    attributes:
+      station:
+        latitude: 緯度
+        longitude: 経度
+        name: 駅名
