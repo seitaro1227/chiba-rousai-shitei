@@ -4,6 +4,6 @@
 
   <%= render 'form' %>
 
-  <%= link_to '詳細', [:admin, @hospital] %> |
+  <%= link_to '詳細', [:admin, @hospital], class: [:btn, :'btn-default'] %>
   <%= link_to '戻る', admin_hospitals_path, class: [:btn, :'btn-default'] %>
 </div>

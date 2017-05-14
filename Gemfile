@@ -40,6 +40,8 @@ gem 'jbuilder', '~> 2.5'
 gem 'honoka-rails'
 gem 'simple_form'
 gem 'i18n_generators'
+gem 'kaminari'
+gem 'kaminari-i18n'
 
 # ジオコーディング
 gem 'geocoder'

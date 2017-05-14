@@ -4,7 +4,7 @@ class Admin::HospitalsController < ApplicationController
 
   # GET /admin/hospitals
   def index
-    @hospitals = Hospital.includes(:subjects,:jurisdiction).all
+    @hospitals = Hospital.includes(:subjects,:jurisdiction).page params[:page]
   end
 
   # GET /admin/hospitals/1
