@@ -1,7 +1,7 @@
 ja:
   activerecord:
     models:
-      subject: 診療科目
+      subject: 診療科目(正規化)
     attributes:
       subject:
         code: コード

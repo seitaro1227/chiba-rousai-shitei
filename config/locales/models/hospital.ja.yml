@@ -7,7 +7,7 @@ ja:
         orgin_address: 住所(オリジナル)
         address: 住所
         subjects: :activerecord.models.subject
-        orgin_subject: 診療科目(オリジナル)
+        orgin_subject: 診療科目
         jurisdiction: :activerecord.models.jurisdiction
         latitude: 緯度
         longitude: 経度

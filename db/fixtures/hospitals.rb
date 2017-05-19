@@ -13,7 +13,7 @@ KEYS = [
     :phone_number # "電 話"
 ]
 
-CSV.foreach('./data/hospital.csv' ,) do |row|
+CSV.foreach('./data/hospital.csv') do |row|
   values = [KEYS, row].transpose.to_h
   Hospital.seed(:number, values)
 end

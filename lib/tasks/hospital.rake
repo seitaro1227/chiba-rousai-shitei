@@ -2,7 +2,8 @@ if Rails.env == 'development'
   require 'roo'
   require 'yaml'
   require 'uri'
-  XLSX_URI = 'http://chiba-roudoukyoku.jsite.mhlw.go.jp/var/rev0/0109/5547/iryou01.2905.xlsx'
+
+  XLSX_URI    = 'http://chiba-roudoukyoku.jsite.mhlw.go.jp/var/rev0/0109/5547/iryou01.2905.xlsx'
   COLUMN_NAME = [
       :jurisdiction_id, # "監督署"
       :number, # "番号"
@@ -14,27 +15,34 @@ if Rails.env == 'development'
       :niji, # "二次"
       :phone_number # "電 話"
   ]
-  namespace :hospital do
-    desc "seed_fuで取り込むためのcsvを作成します"
-    task :create_csv => :environment do
-      # Rake::Task['hospital:dl_xlsx'].execute
-      sheet = Roo::Spreadsheet.open('./data/org/hospital.xlsx').sheet(0)
 
-      rows = sheet.to_matrix.row_vectors[3..-1]
-      rows = rows.map do |row|
-        row.to_a.map do |column|
-          # 改行を消す
-          # ¥tや全角スペースを半角スペースに揃える
-          # 連続するスペースを半角スペース1に寄せる
-          if column.is_a? String
-           column.gsub!(/(\r\n|\r|\n)/,'')
-           column.gsub!(/[\t　]/,' ')
-           column.gsub!(/\s+/,' ')
-          end
-          column
-        end
+  def row_gsub(row)
+    row.to_a.map do |column|
+      # 改行を消す
+      # ¥tや全角スペースを半角スペースに揃える
+      # 連続するスペースを半角スペース1に寄せる
+      if column.is_a? String
+        column.gsub!(/(\r\n|\r|\n)/, '')
+        column.gsub!(/[\t　]/, ' ')
+        column.gsub!(/\s+/, ' ')
       end
+      column
+    end
+  end
 
+  namespace :hospital do
+    desc "./data/org/hospital.xlsx を再取得し ./data/hospital.csv を作成します"
+    task :reset_csv => :environment do
+      mkdir_p './data/org/'
+      Rake::Task['hospital:fetch_xlsx'].execute
+      Rake::Task['hospital:create_csv'].execute
+    end
+
+    desc "./data/org/hospital.xlsx から ./data/hospital.csv を作成します"
+    task :create_csv => :environment do
+      sheet = Roo::Spreadsheet.open('./data/org/hospital.xlsx').sheet(0)
+      rows  = sheet.to_matrix.row_vectors[3..-1]
+      rows  = rows.map{|row| row_gsub(row)}
       CSV.open('./data/hospital.csv', "wb") do |csv|
         rows.each do |row|
           csv << row
@@ -42,8 +50,9 @@ if Rails.env == 'development'
       end
     end
 
-    desc "URLからxlsxをダウンロードします"
-    task :dl_xlsx => :environment do
+    desc "./data/org/hospital.xlsxをダウンロードします"
+    task :fetch_xlsx => :environment do
+      rm './data/org/hospital.xlsx', :force => true
       uri = URI.parse(XLSX_URI)
       Net::HTTP.start(uri.host) do |http|
         resp = http.get(uri.path)
