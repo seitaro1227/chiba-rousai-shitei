@@ -1,90 +1,63 @@
-require 'roo'
-require 'yaml'
-namespace :geocoder do
+if Rails.env == 'development'
+  require 'roo'
+  require 'yaml'
+  require 'uri'
+
+  XLSX_URI    = 'http://chiba-roudoukyoku.jsite.mhlw.go.jp/var/rev0/0109/5547/iryou01.2905.xlsx'
+  COLUMN_NAME = [
+      :jurisdiction_id, # "監督署"
+      :number, # "番号"
+      :name, # "名　　　　　　　称"
+      :zip_code, # "〒"
+      :orgin_address, # "所　　　在　　　地"
+      :orgin_subject, # "診療科目"
+      :saikei, # "採型"
+      :niji, # "二次"
+      :phone_number # "電 話"
+  ]
+
+  def row_gsub(row)
+    row.to_a.map do |column|
+      # 改行を消す
+      # ¥tや全角スペースを半角スペースに揃える
+      # 連続するスペースを半角スペース1に寄せる
+      if column.is_a? String
+        column.gsub!(/(\r\n|\r|\n)/, '')
+        column.gsub!(/[\t　]/, ' ')
+        column.gsub!(/\s+/, ' ')
+      end
+      column
+    end
+  end
+
   namespace :hospital do
-
-    desc "病院の住所から位置情報の取得し更新します。"
-    task :update => :environment do
-      hospitals = Hospital.not_geocoded
-      puts "位置情報が登録されていない病院は#{hospitals.count}件"
-      puts '登録開始'
-      hospitals.find_each do |h|
-        puts "#{h.name}"
-        h.geocode
-        h.save
-      end
-      puts '登録完了'
+    desc "./data/org/hospital.xlsx を再取得し ./data/hospital.csv を作成します"
+    task :reset_csv => :environment do
+      mkdir_p './data/org/'
+      Rake::Task['hospital:fetch_xlsx'].execute
+      Rake::Task['hospital:create_csv'].execute
     end
 
-    desc "病院の住所から位置情報の取得に失敗した一覧を表示します"
-    task :not_geocoded_list => :environment do
-      Hospital.not_geocoded.each do |h|
-        puts "Hospital.find_by(number: '#{h.number}').update(latitude: #{h.latitude}, longitude: #{h.longitude}) # name: '#{h.name}'"
-      end
-    end
-
-    desc "施設名から位置情報を探す"
-    task :update_by_names => :environment do
-      Hospital.not_geocoded.each do |h|
-        name = h.name.gsub(/(\r\n|\r|\n)/, '')
-        search_result = Hospital.find_by(number: '1224425')
-        unless search_result.empty? || search_result.size > 2
-          result = search_result.first
-          if h.zip_code == result.postal_code
-            h.update(latitude: result.latitude, longitude: result.longitude)
-          else
-            puts "skip: #{name}"
-            puts "zip_code_differed"
-            puts "h.zip_code: #{h.zip_code}, result.postal_code: #{result.postal_code}"
-          end
-          puts "name: #{name}"
-          puts "lat: #{result.latitude},lng: #{result.longitude}"
-          puts "address: #{result.address}"
-        else
-          puts "skip: #{name}"
+    desc "./data/org/hospital.xlsx から ./data/hospital.csv を作成します"
+    task :create_csv => :environment do
+      sheet = Roo::Spreadsheet.open('./data/org/hospital.xlsx').sheet(0)
+      rows  = sheet.to_matrix.row_vectors[3..-1]
+      rows  = rows.map{|row| row_gsub(row)}
+      CSV.open('./data/hospital.csv', "wb") do |csv|
+        rows.each do |row|
+          csv << row
         end
-        puts "----------------------------------"
       end
     end
 
-    desc "位置情報の取得に成功した病院をdata/hospital_geo.yamlに書き出します"
-    task :export => :environment do
-      data = {}
-      Hospital.geocoded.each do |h|
-        data[h.number] = {name: h.name,
-                          latitude: h.latitude,
-                          longitude: h.longitude}
-      end
-      open("./data/hospital_geo.yaml","w") do |f|
-        YAML.dump(data,f)
-      end
-    end
-
-    desc "取得に失敗した病院をdata/hospital_not_geocoded.yamlに書き出します"
-    task :export_not_geocoded => :environment do
-      data = {}
-      Hospital.not_geocoded.each do |h|
-        data[h.number] = {name: h.name,
-                          latitude: h.latitude,
-                          longitude: h.longitude}
-      end
-      open("./data/hospital_not_geocoded.yaml","w") do |f|
-        YAML.dump(data,f)
-      end
-    end
-
-    desc "病院の位置情報をdata/hospital_geo.yamlから取り込みます"
-    task :import => :environment  do
-      data = YAML.load_file("./data/hospital_geo.yaml")
-      data.each do|number, values|
-        name = values.delete(:name)
-        if(hospital = Hospital.find_by(number: number))
-          hospital.update(values)
-        else
-          puts "番号#{number}の病院#{name}は登録されていません。"
-        end
+    desc "./data/org/hospital.xlsxをダウンロードします"
+    task :fetch_xlsx => :environment do
+      rm './data/org/hospital.xlsx', :force => true
+      uri = URI.parse(XLSX_URI)
+      Net::HTTP.start(uri.host) do |http|
+        resp = http.get(uri.path)
+        open("./data/org/hospital.xlsx", "wb") { |file| file.write(resp.body) }
       end
     end
   end
 end
-
