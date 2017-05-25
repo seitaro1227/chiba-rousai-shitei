@@ -15,5 +15,6 @@ KEYS = [
 
 CSV.foreach('./data/hospital.csv') do |row|
   values = [KEYS, row].transpose.to_h
+  values[:address] = values[:orgin_address]
   Hospital.seed(:number, values)
 end

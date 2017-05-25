@@ -24,7 +24,8 @@ bin/rake db:seed_fu
 ## 位置情報を登録する
 住所から位置情報を取得し登録します
 ```
-bin/rake geocode:all CLASS=Hospital SLEEP=0.25 BATCH=100
+bin/rake geocode:all CLASS=Hospital SLEEP=0.25
+bin/rake geocode:all CLASS=Station SLEEP=0.25
 ```
 
 ### 使用ライブラリ

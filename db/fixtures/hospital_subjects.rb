@@ -184,12 +184,12 @@ foul_results = []
 hospitals = Hospital.all
 hospitals.each do |hospital|
   result = {:number => hospital.number, :replaced => []}
-  unless hospital.subject
+  unless hospital.orgin_subject
     p "#{hospital.number}の診療科がない"
     next
   end
 
-  splitted_subject = hospital.subject.split(SEPARATORS)
+  splitted_subject = hospital.orgin_subject.split(SEPARATORS)
   splitted_subject.each do |ss|
     normalized_subject = NORMALIZE_MAP[ss]
     if normalized_subject
