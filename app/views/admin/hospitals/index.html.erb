@@ -1,0 +1,70 @@
+<div class="container">
+  <!--<p id="notice"><%= notice %></p>-->
+
+  <h1>病院の一覧</h1>
+
+  <table class="table table-striped table-bordered">
+    <thead>
+    <tr>
+      <th>
+        <%= t '.jurisdiction' %>
+      </th>
+      <th>
+        <%= t '.number' %>
+      </th>
+      <th>
+        <%= t '.name' %>
+      </th>
+
+      <th>
+        <%= t '.orgin_subject' %>
+      </th>
+      <th>
+        <%= t '.subjects' %>
+      </th>
+
+      <th>
+        <%= t '.zip_code' %>
+      </th>
+      <th>
+        <%= t '.address' %>
+      </th>
+
+      <th>
+        <%= t '.niji' %>
+      </th>
+      <th>
+        <%= t '.saikei' %>
+      </th>
+
+      <th>
+        <%= t '.latitude' %>
+        <%= t '.longitude' %>
+      </th>
+      <th colspan="3"></th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <% @hospitals.each do |hospital| %>
+        <tr>
+          <td><%= hospital.jurisdiction.name %></td>
+          <td><%= hospital.number %></td>
+          <td><%= hospital.name %></td>
+          <td><%= hospital.orgin_subject %></td>
+          <td><%= hospital.subjects.map(&:short_name).join(', ') %></td>
+          <td><%= hospital.zip_code %></td>
+          <td><%= hospital.address %></td>
+          <td><%= hospital.niji %></td>
+          <td><%= hospital.saikei %></td>
+          <td>[<%= hospital.latitude %>, <%= hospital.longitude %>]</td>
+          <td><%= link_to '詳細', admin_hospital_path(hospital), class: [:btn, :'btn-default'] %></td>
+          <td><%= link_to '編集', edit_admin_hospital_path(hospital), class: [:btn, :'btn-default'] %></td>
+          <td><%= link_to '削除', [:admin, hospital], method: :delete, data: { confirm: '削除しますか?' }, class: [:btn, :'btn-danger'] %></td>
+        </tr>
+    <% end %>
+    </tbody>
+  </table>
+  <%= paginate @hospitals %>
+  <%= link_to '病院を追加', new_admin_hospital_path %>
+</div>

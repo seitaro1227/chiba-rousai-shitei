@@ -1,0 +1,9 @@
+<div class="container">
+  <%= render 'shared/error_messages', object: @hospital %>
+  <h1>病院を編集</h1>
+
+  <%= render 'form' %>
+
+  <%= link_to '詳細', [:admin, @hospital], class: [:btn, :'btn-default'] %>
+  <%= link_to '戻る', admin_hospitals_path, class: [:btn, :'btn-default'] %>
+</div>

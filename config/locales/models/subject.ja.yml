@@ -1,0 +1,11 @@
+ja:
+  activerecord:
+    models:
+      subject: 診療科目(正規化)
+    attributes:
+      subject:
+        code: コード
+        hospital_subjects: 病院の診療科目
+        hospitals: 病院
+        name: 科目名
+        short_name: 科目名(略称)

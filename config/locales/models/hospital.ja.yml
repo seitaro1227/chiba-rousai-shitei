@@ -1,0 +1,19 @@
+ja:
+  activerecord:
+    models:
+      hospital: 病院
+    attributes:
+      hospital:
+        orgin_address: 住所(オリジナル)
+        address: 住所
+        subjects: :activerecord.models.subject
+        orgin_subject: 診療科目
+        jurisdiction: :activerecord.models.jurisdiction
+        latitude: 緯度
+        longitude: 経度
+        name: 病院名
+        niji: 二次
+        number: 指定番号
+        saikei: 採型
+        phone_number: 電話番号
+        zip_code: 郵便番号

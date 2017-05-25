@@ -1,3 +1,28 @@
+# == Schema Information
+#
+# Table name: hospitals
+#
+#  id              :integer          not null, primary key
+#  number          :string
+#  name            :string
+#  zip_code        :string
+#  address         :string
+#  orgin_subject   :string
+#  saikei          :string
+#  niji            :string
+#  phone_number    :string
+#  latitude        :float
+#  longitude       :float
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  orgin_address   :string
+#  jurisdiction_id :integer
+#
+# Indexes
+#
+#  index_hospitals_on_number  (number) UNIQUE
+#
+
 class Hospital < ApplicationRecord
   has_many :hospital_subjects, dependent: :destroy
   has_many :subjects, through: :hospital_subjects
